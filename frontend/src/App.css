@@ -1,38 +1,198 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  min-height: 100vh;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+/*
+ * Use this CSS to learn some intersting techniques,
+ * in case you're wondering how I built the UI.
+ * Have fun! 😁
+ */
+
+ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+  background-color: #f3f3f3;
+  height: 100vh;
+  /* padding: 2rem; */
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.welcome {
+  font-size: 4rem;
+  font-weight: 500;
+}
+
+.logout__button {
+  font-size: 1.5rem;
+  font-weight: 500;
+  border: none;
+}
+
+.logo {
+  height: 5rem;
+  width: 5rem;
+}
+
+.auth-form-container{
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  background: rgba(0, 0, 0, 0.3);
   color: white;
+  padding: 3rem;
 }
 
-.App-link {
-  color: #61dafb;
+.login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+  /* width: 100%; */
+  color: white;
+  padding: 3rem 1rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+label {
+  text-align: left;
+  padding: 0.25rem 0;
+  font-size: 1.5rem;
+}
+
+.form__title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: white;
+  text-align: left;
+}
+
+.login__input, input {
+  margin: 0.5rem 0;
+  border-radius: 10px;
+  border: none;
+  padding: 1rem;
+  font-size: 1.8rem;
+}
+
+.login__input:focus {
+  outline: none;
+  border: 1px solid #ccc;
+}
+
+.login__input::placeholder {
+  color: #bbb;
+  font-size: 1.8rem;
+}
+
+.login__btn {
+  border: none;
+  background: rgb(0, 136, 255);
+  font-size: 2rem;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.login__btn:hover,
+.login__btn:focus,
+.logout__button:hover,
+.logout__button:focus {
+  outline: none;
+  color: #777;
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: white;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+/* MAIN */
+.app {
+  position: relative;
+  max-width: 100rem;
+  margin: 4rem auto;
+  display: grid;
+  grid-template-columns: 4fr 3fr;
+  grid-template-rows: auto repeat(3, 15rem) auto;
+  gap: 2rem;
+
+  /* NOTE This creates the fade in/out anumation */
+  /* opacity: 0;
+  transition: all 1s; */
+}
+
+.error__message {
+  font-size: 1.7rem;
+  margin: auto;
+}
+
+h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.4rem 1rem;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.modalContainer {
+  max-width: 600px;
+  width: 100%;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.closeBtn {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 20px;
 }
