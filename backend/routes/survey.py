@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Body, status
+from fastapi import APIRouter, Request, Body, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
@@ -15,7 +15,20 @@ async def create_survey(request: Request, survey: Survey = Body(...)):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_survey)
 
 
-@survey_router.get("/", response_description="Get all survey")
-async def get_survey(request: Request):
-    # implement this later
-    return JSONResponse(content={"hi":"Neha"})
+@survey_router.get("/", response_description="Get all surveys")
+async def list_surveys(request: Request):
+    surveys = []
+    for survey in request.app.mongodb["Survey"].find().to_list():  # would i need to add pagination?
+        surveys.append(survey)
+    return surveys
+
+
+@survey_router.get("/{id}", response_description="Get a single survey")
+async def get_survey(id: str, request: Request):
+    if (survey := await request.app.mongodb["Survey"].find_one({"_id":id})) is not None:
+        return survey
+
+    return HTTPException(status_code=404, detail=f"Task {id} not found")
+
+
+# put, delete => do we need?
