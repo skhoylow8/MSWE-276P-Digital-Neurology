@@ -41,16 +41,16 @@ export const Login = (props) => {
 
     return (
         <div className="auth-form-container">
-            {/* <img src={logo} className="logo" /> */}
             <h1 className="welcome">Welcome</h1>
+            <p className="subscript"><i>This platform will allow researchers with limited technical skills to be able to create assessments or surveys easily and efficiently that they can then give to their patients.</i></p>
             <form className="login-form" onSubmit={handleSubmit}>
                 <h2 className="form__title">Login</h2>
-                <Input placeholder="Email" type="text" full style={{ width: "95%", fontSize: "1.3rem" }} value = {email} onChange={(e) => setEmail(e.target.value)} />
-                <Input placeholder="Password" type="password" full style={{ width: "95%", fontSize: "1.3rem" }} value = {password} onChange={(e) => setPassword(e.target.value)} />
+                <Input placeholder="Email" type="text" full style={{ width: "95%"}} className="login__input" value = {email} onChange={(e) => setEmail(e.target.value)} />
+                <Input placeholder="Password" type="password" full style={{ width: "95%" }} className="login__input" value = {password} onChange={(e) => setPassword(e.target.value)} />
                 <button type="submit" className="login__btn">Sign In</button>
             </form>
             <button className="link-btn" onClick={() => props.onFormSwitch('register')}>Don't have an account? Create account</button>
-            {/* <button className="link-btn" onClick={() => props.onFormSwitch('forgot-password')}>Forgot Password?</button> */}
+            <button className="link-btn" onClick={() => props.onFormSwitch('forgot-password')}>Forgot Password?</button>
         </div>
     )
 }

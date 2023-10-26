@@ -2,10 +2,10 @@ import React, { useState } from "react";
 // import Axios from 'axios';
 import logo from '../logo.svg';
 import { useNavigate } from "react-router-dom";
+import { Input } from '@qualtrics/ui-react';
 
 export const ForgotPassword = (props) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [authenticated, setAuthenticated] = useState(localStorage.getItem(localStorage.getItem("authenticated")|| false));
     // const navigate = useNavigate();
 
@@ -39,35 +39,14 @@ export const ForgotPassword = (props) => {
 
     return (
         <div className="auth-form-container">
-            <img src={logo} className="logo" />
-            <h1 className="login__title">Reset Password</h1>
+            <h1 className="welcome">Reset Password</h1>
             <form className="login-form" onSubmit={handleSubmit}>
-                <input
-                    value = {username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    type="text"
-                    placeholder="Username"
-                    minLength="1"
-                    maxLength="127"
-                    className="login__input login__input--user"
-                    name="username"
-                    id="username"
-                />          
-                <input
-                    value = {password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                    placeholder="Password"
-                    minLength="1"
-                    maxLength="127"
-                    className="login__input login__input--password"
-                    name="password"
-                    is="password"
-                />
-                <button type="submit" className="login__btn">Sign In</button>
+                <h2 className="form__title">Confirm Email</h2>
+                <Input placeholder="Email" type="text" full style={{ width: "95%"}} className="login__input" value = {email} onChange={(e) => setEmail(e.target.value)} />
+                <button type="submit" className="login__btn">Send Reset Link</button>
             </form>
-            <button className="link-btn" onClick={() => props.onFormSwitch('register')}>Create account</button>
-            <button className="link-btn" onClick={() => props.onFormSwitch('forgot-password')}>Forgot Password?</button>
+            <button className="link-btn" onClick={() => props.onFormSwitch('login')}>Have an account already? Sign In</button>
+            <button className="link-btn" onClick={() => props.onFormSwitch('register')}>Don't have an account? Create account</button>
         </div>
     )
 }

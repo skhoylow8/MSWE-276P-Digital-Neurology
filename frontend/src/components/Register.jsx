@@ -53,20 +53,19 @@ export const Register = (props) => {
 
     return (
         <div className="auth-form-container">
-            {/* <img src={logo} className="logo" /> */}
             <h1 className="welcome">Sign Up</h1>
             <form className="register-form" onSubmit={handleSubmit}>
-                <h2 className="form__title">Create An Account</h2>
-                <Input placeholder="First Name" type="text" full style={{ width: "95%", fontSize: "1.3rem" }} value = {firstName} onChange={(e) => setFirstName(e.target.value)} />
-                <Input placeholder="Last Name" type="text" full style={{ width: "95%", fontSize: "1.3rem" }} value = {lastName} onChange={(e) => setLastName(e.target.value)} />
-                <Input placeholder="Email" type="text" full style={{ width: "95%", fontSize: "1.3rem" }} value = {email} onChange={(e) => setEmail(e.target.value)} />
-                <Input placeholder="Password" type="password" full style={{ width: "95%", fontSize: "1.3rem" }} value = {password} onChange={(e) => setPassword(e.target.value)} />
-                <Input placeholder="Confirm Password" type="password" full style={{ width: "95%", fontSize: "1.3rem" }} value = {confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                <Input placeholder="Researcher ID" type="number" full style={{ width: "95%", fontSize: "1.3rem" }} value = {researcherID} onChange={(e) => setResearcherID(e.target.value)} />
+                {/* <h2 className="form__title">Create An Account</h2> */}
+                <Input placeholder="First Name" type="text" full style={{ width: "95%" }} className="login__input" value = {firstName} onChange={(e) => setFirstName(e.target.value)} />
+                <Input placeholder="Last Name" type="text" full style={{ width: "95%" }} className="login__input" value = {lastName} onChange={(e) => setLastName(e.target.value)} />
+                <Input placeholder="Email" type="text" full style={{ width: "95%" }} className="login__input" value = {email} onChange={(e) => setEmail(e.target.value)} />
+                <Input placeholder="Password" type="password" full style={{ width: "95%" }} className="login__input" value = {password} onChange={(e) => setPassword(e.target.value)} />
+                <Input placeholder="Confirm Password" type="password" full style={{ width: "95%" }} className="login__input" value = {confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                <Input placeholder="Researcher ID" type="number" full style={{ width: "95%" }} className="login__input" value = {researcherID} onChange={(e) => setResearcherID(e.target.value)} />
                 <button type="submit" className="login__btn">Sign Up</button>
             </form>
             <button className="link-btn" onClick={() => props.onFormSwitch('login')}>Have an account already? Sign In</button>
-            {/* <button className="link-btn" onClick={() => props.onFormSwitch('forgot-password')}>Forgot Password?</button> */}
+            <button className="link-btn" onClick={() => props.onFormSwitch('forgot-password')}>Forgot Password?</button>
         </div>
     )
 }
