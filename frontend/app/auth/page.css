@@ -1,0 +1,249 @@
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+  }
+  
+  html {
+    height: 100%;
+    margin: 0;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #444;
+    background-color: #f3f3f3;
+    height: 100vh;
+    /* padding: 2rem; */
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+  
+  .welcome {
+    font-size: 4rem;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  .subscript {
+    padding-top: 0.5rem;
+  }
+  
+  .logout__button {
+    font-size: 1.5rem;
+    font-weight: 500;
+    border: none;
+  }
+  
+  .logo {
+    height: 5rem;
+    width: 5rem;
+  }
+  
+  .auth-form-container{
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 2rem;
+  }
+  
+  .login-form, .register-form {
+    display: flex;
+    flex-direction: column;
+    /* width: 100%; */
+    color: white;
+    padding: 1rem 1rem;
+  }
+  
+  label {
+    text-align: left;
+    padding: 0.25rem 0;
+    font-size: 1.5rem;
+  }
+  
+  .form__title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    color: white;
+    text-align: left;
+  }
+  
+  .login__input, input {
+    margin: 0.5rem 0;
+    border-radius: 10px;
+    border: none;
+    padding: 1rem;
+    font-size: 1.3rem;
+  }
+  
+  .login__input:focus {
+    outline: none;
+    border: 1px solid #ccc;
+  }
+  
+  .login__input::placeholder {
+    color: #bbb;
+    font-size: 1.3rem;
+  }
+  
+  .login__btn {
+    border: none;
+    background: rgb(0, 136, 255);
+    font-size: 2rem;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 1rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+  }
+  
+  .login__btn:hover,
+  .login__btn:focus,
+  .logout__button:hover,
+  .logout__button:focus {
+    outline: none;
+    color: #e3e3e3;
+  }
+  
+  .link-btn {
+    border: none;
+    background: none;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+  
+  /* MAIN */
+  .app {
+    position: relative;
+    max-width: 100rem;
+    margin: 4rem auto;
+    display: grid;
+    grid-template-columns: 4fr 3fr;
+    grid-template-rows: auto repeat(3, 15rem) auto;
+    gap: 2rem;
+  
+    /* NOTE This creates the fade in/out anumation */
+    /* opacity: 0;
+    transition: all 1s; */
+  }
+  
+  .error__message {
+    font-size: 1.7rem;
+    margin: auto;
+  }
+  
+  h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .form {
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.4rem 1rem;
+  }
+  
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  .modalContainer {
+    max-width: 600px;
+    width: 100%;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .closeBtn {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  @media (min-width:961px)  { /* tablet, landscape iPad, lo-res laptops ands desktops */ 
+    .auth-form-container{
+      display: flex;
+      flex-direction: column;
+      width: 35%;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 1rem 2rem;
+    }
+  
+    .welcome {
+      font-size: 3rem;
+      font-weight: 500;
+      padding-bottom: 1rem;
+      text-align: center;
+    }
+  
+    .form__title {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      color: white;
+      text-align: left;
+    }
+  
+    .link-btn {
+      border: none;
+      background: none;
+      color: white;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+  
+    .login__input, input {
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      border: none;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+  
+    .login__input::placeholder {
+      color: #bbb;
+      font-size: 1rem;
+    }
+    
+    .login__btn {
+      border: none;
+      background: rgb(0, 136, 255);
+      font-size:1.3rem;
+      color: inherit;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  }
