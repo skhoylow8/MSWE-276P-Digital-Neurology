@@ -1,11 +1,3 @@
-.App {
-    text-align: center;
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-  }
-  
   * {
     margin: 0;
     padding: 0;
@@ -35,6 +27,7 @@
   .welcome {
     font-size: 4rem;
     font-weight: 500;
+    text-align: center;
   }
   
   .subscript {
@@ -58,7 +51,7 @@
     width: 75%;
     background: rgba(0, 0, 0, 0.3);
     color: white;
-    padding: 3rem;
+    padding: 2rem;
   }
   
   .login-form, .register-form {
@@ -203,13 +196,14 @@
       width: 35%;
       background: rgba(0, 0, 0, 0.3);
       color: white;
-      padding: 2rem 2rem;
+      padding: 1rem 2rem;
     }
   
     .welcome {
       font-size: 3rem;
       font-weight: 500;
       padding-bottom: 1rem;
+      text-align: center;
     }
   
     .form__title {
