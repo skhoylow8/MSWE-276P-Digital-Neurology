@@ -3,7 +3,7 @@ import Login from './auth/login/page'
 
 export default function Home() {
   return (
-    <div className="login_page">
+    <div className="container flex justify-center items-center h-screen max-w-full">
         <Login></Login>
     </div>
   )
