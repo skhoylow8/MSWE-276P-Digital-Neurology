@@ -2,7 +2,6 @@
 import React from "react";
 import backgroundImg from "../../../public/background.jpg";
 import Link from "next/link";
-// import { useRouter } from 'next/router';
 import { useRouter } from "next/navigation";
 
 export const Login = (props) => {

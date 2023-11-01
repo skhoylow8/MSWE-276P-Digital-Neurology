@@ -1,66 +1,68 @@
 "use client";
 
 import React, { useState } from "react";
-// import Axios from 'axios';
-
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export const Register = (props) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [researcherID, setResearcherID] = useState();
+  const router = useRouter();
 
-  const [authenticated, setAuthenticated] = useState(
-    localStorage.getItem(localStorage.getItem("authenticated") || false)
-  );
-  // const navigate = useNavigate();
+  const validName = (string) => {
+    return /^[A-Za-z]+$/.test(string); 
+  };
 
-  const validateInput = (string) => {
+  const validPassword = (string) => {
     return /^[\w\-.]{1,127}$/.test(string);
   };
 
-  const validateAmountInput = (amount) => {
-    return (
-      /^(?!0\d)\d*(\.\d+)?$/.test(amount) && /^\d+(\.\d{2})?$/.test(amount)
-    );
+  const validEmail = (string) => {
+    return /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(string);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      researcherID
-    );
-    alert("Submitted!");
-    // if(!(validateInput(username) && validateInput(password) && validateAmountInput(amount))){
-    //     alert("The username or password entered is invalid. Please make sure they contain lowercase letters, digits, or one of these special characters['_', '-', '.'] as well as between 1 and 127 characters.");
-    //     return;
-    // }
+    const firstName = e.target.elements.firstName.value;
+    const lastName = e.target.elements.lastName.value;
+    const email = e.target.elements.email.value; 
+    const password = e.target.elements.password.value;
+    const confirmPassword = e.target.elements.confirmPassword.value;
+    const researcherID = e.target.elements.researcherID.value;
 
-    // if(password == confirmPassword){
-    //     Axios.post("http://localhost:8080/account", {
-    //         "username": username,
-    //         "password": password,
-    //         "balance": amount
-    //     }).then((res) => {
-    //         console.log(res);
-    //         setAuthenticated(true)
-    //         localStorage.setItem("authenticated", true);
-    //         navigate("/dashboard", {"state": {"username": username, "token": res.data.access_token}});
-    //     }).catch((error) => {
-    //         alert(error.response.data.message);
-    //     })
-    // } else {
-    //     alert("Something went wrong with the username or password");
-    // }
+    if(!(validName(firstName) && validName(lastName) && validPassword(password) && validEmail(email))){
+        alert("The information entered is invalid.");
+        return;
+    }
+
+    if(password == confirmPassword){
+      try {
+        const response = await fetch('http://localhost:8000/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "_id": researcherID,
+              "first_name": firstName,
+              "last_name": lastName,
+              "email": email,
+              "password": password,
+            }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+
+            router.push('/dashboard')
+        } else {
+            console.error('Failed to make POST request');
+        }
+      } catch (error) {
+          console.error('Error:', error);
+      }
+    } else {
+        alert("Something went wrong with the information entered. Please try again.");
+    }
   };
 
   return (
@@ -71,7 +73,7 @@ export const Register = (props) => {
           <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
         </div>
         <div className="card flex-wrap-row flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
-          <form className="px-8 pt-6 pb-8 mb-4">
+          <form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
             <div className="flex flex-row justify-around">
               <div className="mb-4 px-2">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
@@ -117,7 +119,7 @@ export const Register = (props) => {
               </div>
             </div>
             <div className="flex justify-center">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
                 Sign Up
               </button>
             </div>
