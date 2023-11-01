@@ -71,61 +71,61 @@ export const Register = (props) => {
           <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
         </div>
         <div className="card flex-wrap-row flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
-          <form class="px-8 pt-6 pb-8 mb-4">
-            <div class="flex flex-row justify-around">
-              <div class="mb-4 px-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="firstName">
+          <form className="px-8 pt-6 pb-8 mb-4">
+            <div className="flex flex-row justify-around">
+              <div className="mb-4 px-2">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
                   First Name
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="First Name" />
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="First Name" />
               </div>
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="lastName">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
                   Last Name
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Last Name" />
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Last Name" />
               </div>
             </div>
-            <div class="flex flex-row justify-around">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+            <div className="flex flex-row justify-around">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                   Email
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email" />
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email" />
               </div>
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="researcherID">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="researcherID">
                   Researcher ID
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="researcherID" type="text" placeholder="Researcher ID" />
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="researcherID" type="text" placeholder="Researcher ID" />
               </div>
             </div>
-            <div class="flex flex-row justify-around">
-              <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+            <div className="flex flex-row justify-around">
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                   Password
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
-                {/* <p class="text-red-500 text-xs italic">Please choose a password.</p> */}
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
+                {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}
               </div>
-              <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirmPassword">
+              <div className="mb-6">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
                   Confirm Password
                 </label>
-                <input class="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirmPassword" type="password" placeholder="******************" />
-                {/* <p class="text-red-500 text-xs italic">Please choose a password.</p> */}
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirmPassword" type="password" placeholder="******************" />
+                {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}
               </div>
             </div>
-            <div class="flex justify-center">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
+            <div className="flex justify-center">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button">
                 Sign Up
               </button>
             </div>
-            <div class="flex items-center justify-between my-3">
-              <Link class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/login">
+            <div className="flex items-center justify-between my-3">
+              <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/login">
                 Have An Account?
               </Link>
-              <Link class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
+              <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
                 Forgot Password?
               </Link>
             </div>

@@ -11,6 +11,8 @@
   "dependencies": {
     "@qualtrics/ui-react": "^2.29.0",
     "axios": "^1.6.0",
+    "cookies": "^0.8.0",
+    "http-proxy": "^1.18.1",
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18"
