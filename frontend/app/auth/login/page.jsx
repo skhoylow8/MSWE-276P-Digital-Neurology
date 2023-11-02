@@ -1,8 +1,11 @@
 'use client';
 import React from "react";
+import Cookies from "universal-cookie";
 import backgroundImg from "../../../public/background.jpg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+const cookies = new Cookies();
 
 export const Login = (props) => {
   const router = useRouter();
@@ -58,8 +61,17 @@ export const Login = (props) => {
 
           if (response.ok) {
               const result = await response.json();
-              window.localStorage.setItem("token", result.access_token);
-              window.localStorage.setItem("authenticated", true);
+              const accessToken = result.access_token;
+
+              // Set the access token as an HTTP-only cookie
+              cookies.set('access_token', accessToken, {
+                path: '/',
+                httpOnly: true,
+                secure: false // Set to true if using HTTPS
+              });
+              
+            //   window.localStorage.setItem("token", result.access_token);
+            //   window.localStorage.setItem("authenticated", true);
 
               router.push('/dashboard')
           } else {

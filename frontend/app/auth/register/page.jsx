@@ -1,8 +1,10 @@
 "use client";
-
+import Cookies from "universal-cookie";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
+const cookies = new Cookies();
 
 export const Register = (props) => {
   const router = useRouter();
@@ -53,8 +55,18 @@ export const Register = (props) => {
         if (response.ok) {
             const result = await response.json();
 
+            const accessToken = result.access_token;
+
+            // Set the access token as an HTTP-only cookie
+            cookies.set('access_token', accessToken, {
+              path: '/',
+              httpOnly: true,
+              secure: false // Set to true if using HTTPS
+            });
+
             router.push('/dashboard')
         } else {
+            console.log(response)
             console.error('Failed to make POST request');
         }
       } catch (error) {

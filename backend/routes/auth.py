@@ -26,7 +26,11 @@ async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)
     researcher = jsonable_encoder(researcher)
     new_researcher = await request.app.mongodb["Researcher"].insert_one(researcher)
     created_researcher = await request.app.mongodb["Researcher"].find_one({"_id": new_researcher.inserted_id})
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_researcher)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content={
+        "access_token": create_access_token(data={"user_id": created_researcher['_id']}),
+        "token_type": "bearer",
+        "researcher": created_researcher
+    })
 
 
 @auth_router.post('/login', response_description="Create access and refresh tokens for user")
