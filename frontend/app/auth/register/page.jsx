@@ -67,6 +67,7 @@ export const Register = (props) => {
 
   return (
     <div className="hero min-h-screen bg-base-200">
+      <img className="lg:h-1/4 h-auto flex self-start p-5" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
       <div className="hero-content flex-col lg:flex-row max-w-4xl">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold text-stone-700">Sign Up</h1>

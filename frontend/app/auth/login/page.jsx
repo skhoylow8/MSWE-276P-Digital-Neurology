@@ -1,6 +1,5 @@
 'use client';
 import React from "react";
-import backgroundImg from "../../../public/background.jpg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -72,15 +71,16 @@ export const Login = (props) => {
   };
 
   const myStyle = {
-    backgroundImage: "url(" + backgroundImg + ")", // <a href="https://www.freepik.com/free-vector/ai-technology-brain-background-vector-digital-transformation-concept_16268324.htm#query=digital%20brain&position=33&from_view=search&track=ais">Image by rawpixel.com</a> on Freepik
+    backgroundImage: "/images/background.jpg", // <a href="https://www.freepik.com/free-vector/ai-technology-brain-background-vector-digital-transformation-concept_16268324.htm#query=digital%20brain&position=33&from_view=search&track=ais">Image by rawpixel.com</a> on Freepik
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-screen bg-base-200" style={myStyle}>
+        <img className="lg:h-1/4 h-auto flex self-start p-5 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
       <div className="hero-content flex-col lg:flex-row max-w-4xl">
         <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-bold text-stone-700">Welcome</h1>
-          <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
+            <h1 className="text-5xl font-bold text-stone-700">Welcome</h1>
+            <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
         </div>
         <div className="card flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
           <form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
