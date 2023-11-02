@@ -61,17 +61,16 @@ export const Login = (props) => {
 
           if (response.ok) {
               const result = await response.json();
-              const accessToken = result.access_token;
+              // const accessToken = result.access_token;
 
               // Set the access token as an HTTP-only cookie
-              cookies.set('access_token', accessToken, {
+              cookies.set('authenticated', true, {
                 path: '/',
-                httpOnly: true,
+                httpOnly: false,
                 secure: false // Set to true if using HTTPS
               });
               
-            //   window.localStorage.setItem("token", result.access_token);
-            //   window.localStorage.setItem("authenticated", true);
+              console.log(cookies.get('authenticated'));
 
               router.push('/dashboard')
           } else {

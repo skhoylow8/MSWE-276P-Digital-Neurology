@@ -3,24 +3,38 @@ import React, { useEffect} from 'react'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Table from '../components/Table';
+import Cookies from 'universal-cookie';
 
 const Dashboard = (props) => {
     const router = useRouter();
+    const cookies = new Cookies();
 
     const handleLogout = (e) =>{
-        window.localStorage.setItem("token", null);
-        window.localStorage.setItem("authenticated", false);
-        router.push('/')
+        cookies.remove('authenticated');
+        router.push('/');
+    }
+
+    const handleGetAssessments = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('http://localhost:8000/survey');
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => { 
-        if(!window.localStorage.getItem("authenticated")){
-            router.push('/')
+        if(!cookies.get('authenticated')){
+            router.push('/');
         }
      }, []);
 
     return (
-        <>
+        cookies.get('authenticated') && <>
             <div className="drawer">
                 <input id="my-drawer" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content">
@@ -42,6 +56,7 @@ const Dashboard = (props) => {
                             <h2 className="card-title text-stone-900 text-2xl">Participants</h2>
                             <p className='text-stone-900 text-sm'>Most recently updated patients.</p>
                             <Table />
+                            <button className="btn btn-primary" onClick={handleGetAssessments}>Get Surveys</button>
                         </div>
                     </div>
                 </div> 
