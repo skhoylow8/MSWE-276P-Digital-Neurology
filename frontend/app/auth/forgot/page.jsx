@@ -42,11 +42,11 @@ export const ForgotPassword = (props) => {
 
   return (
     <div className="hero min-h-screen bg-base-200">
-      <img className="lg:h-1/4 h-auto flex self-start p-5 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
-      <div className="hero-content flex-col lg:flex-row max-w-4xl">
+      <img className="lg:w-1/2 w-2/3 flex self-start p-5 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
+      <div className="hero-content flex-col lg:flex-row max-w-4xl mt-5">
         <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-bold text-stone-700">Reset Password</h1>
-          <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
+          <h1 className="text-6xl lg:text-5xl font-bold text-stone-700">Reset Password</h1>
+          <p className="py-6 text-stone-500 lg:text-sm text-lg font-bold">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
         </div>
         <div className="card flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
           <form className="px-8 pt-6 pb-8 mb-4">

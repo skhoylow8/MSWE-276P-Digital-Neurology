@@ -11,7 +11,7 @@ const Table = (props) => {
                 {/* head */}
                 <thead>
                     <tr>
-                        <th>Participant Name</th>
+                        <th>Participant ID</th>
                         <th>Assessment Name</th>
                         <th>Status</th>
                         <th>Completed On</th>
@@ -20,7 +20,7 @@ const Table = (props) => {
                 <tbody>
                     {/* row 1 */}
                     <tr className="bg-current hover:bg-stone-50">
-                        <td className='text-stone-900'>Jane Doe</td>
+                        <td className='text-stone-900'>123</td>
                         <td className='text-stone-900'>Assessment 1</td>
                         <td className='text-stone-900'><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
                         <td className='text-stone-900'>{formatDate(new Date())}</td>

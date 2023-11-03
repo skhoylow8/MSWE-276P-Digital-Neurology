@@ -25,20 +25,20 @@ const Dashboard = (props) => {
                 <nav className="bg-gray-800">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between">
-                            <div className="flex items-center">
+                            <div className="flex items-center absolute left-0 pl-5">
                                 <div className="flex-shrink-0">
                                     <img className="h-10" src="/images/digital-neurology-logo.png" alt="Digital Neurology" />
                                 </div>
-                            <div className="hidden md:block">
-                                <div className="ml-10 flex items-baseline space-x-4">
-                                    {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                                    <Link href="/dashboard" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</Link>
-                                    <Link href="/assessments" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Assessments</Link>
-                                    <Link href="/participants" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Participants</Link>
+                                <div className="hidden md:block">
+                                    <div className="ml-10 flex items-baseline space-x-4">
+                                        {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
+                                        <Link href="/dashboard" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</Link>
+                                        <Link href="/assessments" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Assessments</Link>
+                                        <Link href="/participants" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Participants</Link>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
-                            <div className="hidden md:block">
+                            <div className="hidden md:block absolute right-0 pr-5">
                                 <div className="ml-4 flex items-center md:ml-6">
                                     {/* <!-- Profile dropdown --> */}
                                     <details className="dropdown relative ml-3">
@@ -66,18 +66,19 @@ const Dashboard = (props) => {
                                 </div>
                             </div>
 
-                            <div className="dropdown dropdown-end md:hidden">
-                                <button type="button" tabIndex={0} className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" aria-controls="mobile-menu" aria-expanded="false">
+                            {/* <!-- Mobile menu --> */}
+                            <details className="dropdown md:dropdown-end md:hidden">
+                                <summary className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white" aria-controls="mobile-menu" aria-expanded="false">
                                     <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                                     </svg>
-                                </button>
-                                <ul tabIndex={0} id="mobile-menu" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                                </summary>
+                                <ul id="mobile-menu" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                                     <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                         {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                                         <Link href="/dashboard" className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</Link>
-                                        <Link href="/assessments" className="text-gray-400 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Assessments</Link>
-                                        <Link href="/participants" className="text-gray-400 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Participants</Link>
+                                        <Link href="/assessments" className="text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Assessments</Link>
+                                        <Link href="/participants" className="text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Participants</Link>
                                     </div>
                                     <div className="border-t border-gray-700 pb-3 pt-4">
                                         <div className="flex flex-col px-5">
@@ -85,19 +86,19 @@ const Dashboard = (props) => {
                                             <div className="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
                                         </div>
                                         <div className="mt-3 space-y-1 px-2">
-                                            <a href="#" onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">Sign out</a>
+                                            <a href="#" onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-700 hover:text-white">Sign out</a>
                                         </div>
                                     </div>
                                 </ul>
-                            </div>
+                            </details>
                         </div>
                     </div>
 
                 </nav>
 
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome</h1>
+                <header className="bg-white shadow ">
+                    <div className="max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome</h1>
                     </div>
                 </header>
                 <main>
