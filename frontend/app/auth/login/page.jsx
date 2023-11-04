@@ -1,92 +1,119 @@
-"use client";
-import React, { useState } from "react";
-// import Axios from 'axios';
-// import logo from "../logo.jpg";
-import "../page.css";
-
-import { Input } from "@qualtrics/ui-react";
+'use client';
+import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const Login = (props) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(
-    localStorage.getItem(localStorage.getItem("authenticated") || false)
-  );
-  // const navigate = useNavigate();
+  const router = useRouter();
 
-  const validateInput = (string) => {
-    return /^[\w\-.]{1,127}$/.test(string);
+  const validPassword = (string) => {
+      return /^[\w\-.]{1,127}$/.test(string);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validEmail = (string) => {
+      return /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(string);
+  }
 
-    console.log(email, password);
-    alert("Submitted!");
-    // if(!(validateInput(username) && validateInput(password))){
-    //     alert("The username or password entered is invalid. Please make sure they contain lowercase letters, digits, or one of these special characters['_', '-', '.'] as well as between 1 and 127 characters.");
-    //     return;
-    // }
+  const encodeFormData = (data)=>{
+      const formBody = new URLSearchParams();
+      
+      for (const key in data) {
+          formBody.append(key, data[key]);
+      }
+      
+      return formBody.toString();
+  }
 
-    // Axios.post("http://localhost:8080/account/login", {
-    //     "username": username,
-    //     "password": password
-    // }).then((res) => {
-    //     setAuthenticated(true)
-    //     localStorage.setItem("authenticated", true);
-    //     navigate("/dashboard", {"state": {"username": username, "token": res.data.access_token}});
-    // }).catch((e) => {
-    //     if(e.response.status == 401){
-    //         alert(e.response.data.message);
-    //         console.log(e.response.data);
-    //     }
-    // })
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      const email = e.target.elements.email.value;
+      const password = e.target.elements.password.value;
+      console.log(email, password);
+
+      if(!(validEmail(email) && validPassword(password))){
+          alert("The email or password entered is invalid. Please make sure they contain lowercase letters, digits, or one of these special characters['_', '-', '.'] as well as between 1 and 127 characters.");
+          return;
+      }
+
+      const formData = {
+          grant_type: '',
+          username: email,
+          password: password,
+          scope: '',
+          client_id: '',
+          client_secret: '',
+      };
+
+      try {
+          const response = await fetch('http://localhost:8000/login', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'accept': 'application/json',
+              },
+              body: encodeFormData(formData),
+          });
+
+          if (response.ok) {
+              const result = await response.json();
+              window.localStorage.setItem("token", result.access_token);
+              window.localStorage.setItem("authenticated", true);
+
+              router.push('/dashboard')
+          } else {
+              console.error('Failed to make POST request');
+          }
+      } catch (error) {
+          console.error('Error:', error);
+      }
+  
+  };
+
+  const myStyle = {
+    backgroundImage: "/images/background.jpg", // <a href="https://www.freepik.com/free-vector/ai-technology-brain-background-vector-digital-transformation-concept_16268324.htm#query=digital%20brain&position=33&from_view=search&track=ais">Image by rawpixel.com</a> on Freepik
   };
 
   return (
-    <div className="auth-form-container">
-      <h1 className="welcome">Welcome</h1>
-      <p className="subscript">
-        <i>
-          This platform will allow researchers with limited technical skills to
-          be able to create assessments or surveys easily and efficiently that
-          they can then give to their patients.
-        </i>
-      </p>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2 className="form__title">Login</h2>
-        <Input
-          placeholder="Email"
-          type="text"
-          full
-          style={{ width: "95%" }}
-          className="login__input"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Input
-          placeholder="Password"
-          type="password"
-          full
-          style={{ width: "95%" }}
-          className="login__input"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" className="login__btn">
-          Sign In
-        </button>
-      </form>
-      <div className="mx-auto text-center">
-        <Link href="/auth/register" className="underline block">
-            Don't have an account? Create one.
-        </Link>
-        <Link href="/auth/forgot" className="underline block">
-          Forgot Password?
-        </Link>
+    <div className="hero min-h-screen bg-base-200" style={myStyle}>
+        <img className="lg:w-1/2 w-2/3 flex self-start p-5 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
+      <div className="hero-content flex-col lg:flex-row max-w-4xl mt-5">
+        <div className="text-center lg:text-left">
+            <h1 className="text-6xl lg:text-5xl font-bold text-stone-700">Welcome</h1>
+            <p className="py-6 text-stone-500 lg:text-sm text-lg font-bold">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
+        </div>
+        <div className="card flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
+          <form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+              <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                  Email
+                  </label>
+                  <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email"/>
+              </div>
+              <div className="mb-6">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  Password
+                  </label>
+                  <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************"/>
+                  {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}
+              </div>
+              <div className="flex justify-center">
+                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                  Log In
+                  </button>
+              </div>
+              <div className="flex items-center justify-between my-3">
+                  <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/register">
+                  Don't Have An Account?
+                  </Link>
+                  <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
+                  Forgot Password?
+                  </Link>
+              </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </div> 
   );
 };
 

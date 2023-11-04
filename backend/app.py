@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from routes.assessment import assessment_router
@@ -9,6 +10,13 @@ from settings import settings
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Set this to a list of allowed origins (e.g., ["http://localhost", "https://example.com"])
+    allow_credentials=True,  # Set this to True if you want to allow cookies with credentials
+    allow_methods=["*"],  # Set this to a list of allowed HTTP methods (e.g., ["GET", "POST"])
+    allow_headers=["*"],  # Set this to a list of allowed HTTP headers
+)
 
 @app.on_event("startup")
 async def startup_db_client():
