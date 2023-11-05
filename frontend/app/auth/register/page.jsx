@@ -52,6 +52,10 @@ export const Register = (props) => {
 
         if (response.ok) {
             const result = await response.json();
+            const accessToken = result.access_token;
+
+            window.localStorage.setItem("token", accessToken);
+            window.localStorage.setItem("authenticated", true);
 
             router.push('/dashboard')
         } else {
