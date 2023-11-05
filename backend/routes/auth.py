@@ -1,13 +1,9 @@
-from fastapi import APIRouter, Request, Body, status
+from fastapi import APIRouter, Request, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, status, HTTPException, Depends
+from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import RedirectResponse
 from models.researcher import ResearcherSignUp
-
-from uuid import uuid4
-
 from utils.auth import get_hashed_password, verify_password, create_access_token
 
 auth_router = APIRouter()
@@ -26,7 +22,11 @@ async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)
     researcher = jsonable_encoder(researcher)
     new_researcher = await request.app.mongodb["Researcher"].insert_one(researcher)
     created_researcher = await request.app.mongodb["Researcher"].find_one({"_id": new_researcher.inserted_id})
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_researcher)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content={
+        "access_token": create_access_token(data={"user_id": created_researcher['_id']}),
+        "token_type": "bearer",
+        "researcher": created_researcher
+    })
 
 
 @auth_router.post('/login', response_description="Create access and refresh tokens for user")
