@@ -96,8 +96,8 @@ const Table = ({ page, data }) => {
                     className='pb-4'
                 >
                     <RadioGroup label="Do you consent to completing this assessment?" name="consentQ" defaultValue="1">
-                        <RadioOption value="1" label="Option 1 label" />
-                        <RadioOption value="2" label="Option 2 label" />
+                        <RadioOption value="1" label="Yes" />
+                        <RadioOption value="2" label="No" />
                     </RadioGroup>
                 </FormField>
                 <textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled></textarea>
