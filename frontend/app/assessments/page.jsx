@@ -20,6 +20,16 @@ const Assessments = () => {
         "Memory Survey",
     ];
 
+    const date = new Date(); 
+
+    const assessmentData = [
+        { id: '1', name: 'Assessment 1', description: 'This is a description about Assessment 1.', createdOn: date, consentText: 'This is a consent form.........', },
+        { id: '2', name: 'Assessment 2', description: 'This is a description about Assessment 2.', createdOn: date, consentText: 'This is a consent form.........',  },
+        { id: '3', name: 'Assessment 1', description: 'This is a description about Assessment 1.', createdOn: date, consentText: 'This is a consent form.........',  },
+        { id: '4', name: 'Assessment 1', description: 'This is a description about Assessment 1.', createdOn: date, consentText: 'This is a consent form.........', },
+        { id: '5', name: 'Assessment 2', description: 'This is a description about Assessment 2.', createdOn: date, consentText: 'This is a consent form.........',  },
+    ]
+
     useEffect(() => { 
         if(!window.localStorage.getItem("authenticated")){
             router.push('/')
@@ -61,7 +71,7 @@ const Assessments = () => {
                                 </svg>
                             </button>
                         </div>
-                        <Table page="assessments" />
+                        <Table page="assessments" data={assessmentData} />
                     </div>
                 </div>
 
@@ -89,12 +99,6 @@ const Assessments = () => {
                     <div className="flex justify-center mt-4">
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button" onClick={handleCreateAssessment}>Create Assessment</button>
                     </div>
-                </Modal>
-
-                {/* Start Assessment Modal */}
-                <Modal id="start-assessment-modal">
-                    <h3 className="font-bold text-lg">Hello!</h3>
-                    <p className="py-4">Press ESC key or click on ✕ button to close</p>
                 </Modal>
             </main>
         </div>

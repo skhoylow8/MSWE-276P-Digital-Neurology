@@ -4,6 +4,16 @@ import Table from '../components/Table';
 import NavBar from '../components/NavBar';
 
 const Dashboard = (props) => {
+    const date = new Date(); 
+
+    const dashboardData = [
+        { id: '1', name: 'Assessment 1', status: 'completed', completedOn: date },
+        { id: '2', name: 'Assessment 2', status: 'incomplete', completedOn: date },
+        { id: '3', name: 'Assessment 1', status: 'completed', completedOn: date },
+        { id: '4', name: 'Assessment 1', status: 'completed', completedOn: date },
+        { id: '5', name: 'Assessment 2', status: 'completed', completedOn: date },
+    ]
+
     useEffect(() => { 
         if(!window.localStorage.getItem("authenticated")){
             router.push('/')
@@ -23,7 +33,7 @@ const Dashboard = (props) => {
                     <div className="card-body">
                         <h2 className="card-title text-stone-900 text-2xl">Participants</h2>
                         <p className='text-stone-900 text-sm'>Most recently updated patients.</p>
-                        <Table page="dashboard" />
+                        <Table page="dashboard" data={dashboardData} />
                     </div>
                     </div>
                 
