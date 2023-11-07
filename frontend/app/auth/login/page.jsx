@@ -1,12 +1,10 @@
 'use client';
 import React from "react";
 import Link from "next/link";
-import Cookie from 'universal-cookie';
 import { useRouter } from "next/navigation";
 
 export const Login = (props) => {
   const router = useRouter();
-  const cookies = new Cookie();
 
   const validPassword = (string) => {
       return /^[\w\-.]{1,127}$/.test(string);

@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import Table from '../components/Table';
 import NavBar from '../components/NavBar';
-import Cookie from 'universal-cookie';
 import { useRouter } from 'next/navigation';
 
 const Dashboard = (props) => {

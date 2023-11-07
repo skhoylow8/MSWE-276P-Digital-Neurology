@@ -12,6 +12,8 @@ auth_router = APIRouter()
 @auth_router.post('/signup', response_description="Create new user")
 async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)):
     # querying database to check if user already exists
+    import pdb
+    pdb.set_trace()
     existing_researcher = await request.app.mongodb["Researcher"].find_one({"email": researcher.email})
     if existing_researcher is not None:
         raise HTTPException(
