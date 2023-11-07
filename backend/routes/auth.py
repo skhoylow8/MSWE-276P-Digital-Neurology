@@ -1,13 +1,9 @@
-from fastapi import APIRouter, Request, Body, status
+from fastapi import APIRouter, Request, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from fastapi import FastAPI, status, HTTPException, Depends
+from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import RedirectResponse
 from models.researcher import ResearcherSignUp
-
-from uuid import uuid4
-
 from utils.auth import get_hashed_password, verify_password, create_access_token
 
 auth_router = APIRouter()
