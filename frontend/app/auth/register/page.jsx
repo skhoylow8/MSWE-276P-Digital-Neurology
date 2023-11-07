@@ -1,10 +1,7 @@
 "use client";
-import Cookies from "universal-cookie";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
-const cookies = new Cookies();
 
 export const Register = (props) => {
   const router = useRouter();
@@ -59,15 +56,6 @@ export const Register = (props) => {
             window.localStorage.setItem("token", accessToken);
             window.localStorage.setItem("authenticated", true);
 
-            const accessToken = result.access_token;
-
-            // Set the access token as an HTTP-only cookie
-            cookies.set('access_token', accessToken, {
-              path: '/',
-              httpOnly: true,
-              secure: false // Set to true if using HTTPS
-            });
-
             router.push('/dashboard')
         } else {
             console.log(response)
@@ -83,10 +71,11 @@ export const Register = (props) => {
 
   return (
     <div className="hero min-h-screen bg-base-200">
-      <div className="hero-content flex-col lg:flex-row max-w-4xl">
+      <img className="lg:w-1/2 w-2/3 flex self-start lg:p-2 p-5 lg:mt-3 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
+      <div className="hero-content flex-col lg:flex-row max-w-4xl mt-6">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold text-stone-700">Sign Up</h1>
-          <p className="py-6 text-stone-500">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
+          <p className="py-6 text-stone-500 lg:text-sm text-lg font-bold">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>
         </div>
         <div className="card flex-wrap-row flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
           <form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
