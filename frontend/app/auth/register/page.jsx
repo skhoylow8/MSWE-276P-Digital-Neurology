@@ -24,16 +24,16 @@ export const Register = (props) => {
     const firstName = e.target.elements.firstName.value;
     const lastName = e.target.elements.lastName.value;
     const email = e.target.elements.email.value; 
+    const confirmEmail = e.target.elements.confirmEmail.value;
     const password = e.target.elements.password.value;
     const confirmPassword = e.target.elements.confirmPassword.value;
-    const researcherID = e.target.elements.researcherID.value;
 
-    if(!(validName(firstName) && validName(lastName) && validPassword(password) && validEmail(email))){
+    if(!(validName(firstName) && validName(lastName) && validPassword(password) && validEmail(email) && validEmail(confirmEmail))){
         alert("The information entered is invalid.");
         return;
     }
 
-    if(password == confirmPassword){
+    if(password == confirmPassword && email == confirmEmail){
       try {
         const response = await fetch('http://localhost:8000/signup', {
             method: 'POST',
@@ -41,7 +41,6 @@ export const Register = (props) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              "_id": researcherID,
               "first_name": firstName,
               "last_name": lastName,
               "email": email,
@@ -101,10 +100,10 @@ export const Register = (props) => {
                 <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email" />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="researcherID">
-                  Researcher ID
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmEmail">
+                  Confirm Email
                 </label>
-                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="researcherID" type="text" placeholder="Researcher ID" />
+                <input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirmEmail" type="text" placeholder="Confirm Email" />
               </div>
             </div>
             <div className="flex flex-row justify-around">
