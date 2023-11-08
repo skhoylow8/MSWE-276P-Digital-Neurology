@@ -62,7 +62,7 @@ export const Register = (props) => {
         router.push('/dashboard')
 
       } catch (error) {
-          console.error('Error:', error.message);
+        alert(error.message)
       }
     } else {
         alert("Something went wrong with the information entered. Please try again.");
