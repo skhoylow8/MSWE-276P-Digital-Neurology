@@ -48,20 +48,21 @@ export const Register = (props) => {
             }),
         });
 
-        if (response.ok) {
-            const result = await response.json();
-            const accessToken = result.access_token;
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail);
+        } 
 
-            window.localStorage.setItem("token", accessToken);
-            window.localStorage.setItem("authenticated", true);
+        const result = await response.json();
+        const accessToken = result.access_token;
 
-            router.push('/dashboard')
-        } else {
-            console.log(response)
-            console.error('Failed to make POST request');
-        }
+        window.localStorage.setItem("token", accessToken);
+        window.localStorage.setItem("authenticated", true);
+
+        router.push('/dashboard')
+
       } catch (error) {
-          console.error('Error:', error);
+          console.error('Error:', error.message);
       }
     } else {
         alert("Something went wrong with the information entered. Please try again.");
