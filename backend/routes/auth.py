@@ -3,7 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from models.researcher import ResearcherSignUp
+from models.researcher import ResearcherSignUp, Researcher
 from utils.auth import get_hashed_password, verify_password, create_access_token
 
 auth_router = APIRouter()
@@ -17,8 +17,23 @@ async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Researcher with this email already exists"
+        )
+    if researcher.email != researcher.confirm_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Emails do not match"
+        )
+    if researcher.password != researcher.confirm_password:
+        raise  HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Passwords do not match"
+        )
+    researcher = Researcher(
+        first_name=researcher.first_name,
+        last_name=researcher.last_name,
+        email=researcher.email,
+        password=get_hashed_password(researcher.password)
     )
-    researcher.password = get_hashed_password(researcher.password)
     researcher = jsonable_encoder(researcher)
     new_researcher = await request.app.mongodb["Researcher"].insert_one(researcher)
     created_researcher = await request.app.mongodb["Researcher"].find_one({"_id": new_researcher.inserted_id})
@@ -47,5 +62,8 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     return {
         "access_token": create_access_token(data={"user_id": user['_id']}),
         "token_type": "bearer",
+        "researcher_id": user['_id'],
+        "researcher_name": user['first_name'],
+        "researcher_email": user['email'],
     }
 
