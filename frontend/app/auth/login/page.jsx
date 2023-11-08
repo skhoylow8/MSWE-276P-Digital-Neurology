@@ -56,11 +56,13 @@ export const Login = (props) => {
           });
 
           if (response.ok) {
-              const result = await response.json();
-              window.localStorage.setItem("token", result.access_token);
-              window.localStorage.setItem("authenticated", true);
+            const result = await response.json();
+            const accessToken = result.access_token;
 
-              router.push('/dashboard')
+            window.localStorage.setItem("token", accessToken);
+            window.localStorage.setItem("authenticated", true);
+
+            router.push('/dashboard')
           } else {
               console.error('Failed to make POST request');
           }
@@ -75,7 +77,7 @@ export const Login = (props) => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200" style={myStyle}>
+    <div className="hero min-h-screen bg-base-200">
         <img className="lg:w-1/2 w-2/3 flex self-start p-5 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
       <div className="hero-content flex-col lg:flex-row max-w-4xl mt-5">
         <div className="text-center lg:text-left">

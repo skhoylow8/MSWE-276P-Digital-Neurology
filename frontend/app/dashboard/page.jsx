@@ -1,7 +1,8 @@
 'use client';
-import React, { useEffect} from 'react'
+import React, { useEffect } from 'react';
 import Table from '../components/Table';
 import NavBar from '../components/NavBar';
+import { useRouter } from 'next/navigation';
 
 const Dashboard = (props) => {
     const date = new Date(); 
@@ -13,10 +14,24 @@ const Dashboard = (props) => {
         { id: '4', name: 'Assessment 1', status: 'completed', completedOn: date },
         { id: '5', name: 'Assessment 2', status: 'completed', completedOn: date },
     ]
+    const router = useRouter();
+
+    const handleGetAssessments = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('http://localhost:8000/survey');
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => { 
-        if(!window.localStorage.getItem("authenticated")){
-            router.push('/')
+        if(!window.localStorage.getItem('authenticated')){
+            router.push('/');
         }
      }, []);
 
@@ -35,8 +50,7 @@ const Dashboard = (props) => {
                         <p className='text-stone-900 text-sm'>Most recently updated patients.</p>
                         <Table page="dashboard" data={dashboardData} />
                     </div>
-                    </div>
-                
+                </div>
             </main>
         </div>
     )
