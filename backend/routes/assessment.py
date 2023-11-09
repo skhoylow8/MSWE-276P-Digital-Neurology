@@ -4,7 +4,7 @@ from fastapi import APIRouter, Request, HTTPException, status, File, Depends, Up
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from models.assessment import AssessmentRequest, Assessment, AssessmentView
+from models.assessment import AssessmentRequest, Assessment, AssessmentDisplay
 from utils.misc import convert_file_to_text
 
 assessment_router = APIRouter()
@@ -59,7 +59,7 @@ async def get_assessment(request: Request):
         surveys = []
         for survey_id in assessment.survey_ids:
             surveys.append(await request.app.mongodb["Survey"].find_one({"_id": survey_id}))
-        assessment = AssessmentView(
+        assessment = AssessmentDisplay(
             assessment=assessment,
             surveys=surveys
         )

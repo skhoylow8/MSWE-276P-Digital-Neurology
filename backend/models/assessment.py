@@ -8,7 +8,7 @@ from models.survey import Survey
 
 
 class AssessmentRequest(BaseModel):
-    name: str
+    name: str = Field(...)
     desc: str = Field(...)
     survey_ids: List[str] = Field(...)
     researcher_id: str = Field(...)
@@ -24,6 +24,6 @@ class Assessment(BaseModel):
     researcher_id: str = Field(...)
 
 
-class AssessmentView(BaseModel):
-    assessment = Assessment
-    surveys = List[Survey]
+class AssessmentDisplay(BaseModel):
+    assessment: Assessment
+    surveys: List[Survey]
