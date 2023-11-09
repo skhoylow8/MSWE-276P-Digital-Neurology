@@ -18,7 +18,7 @@ async def create_survey(request: Request, survey: Survey = Body(...)):
 @survey_router.get("/", response_description="Get all surveys")
 async def list_surveys(request: Request):
     surveys = []
-    for survey in request.app.mongodb["Survey"].find().to_list():  # would i need to add pagination?
+    for survey in await request.app.mongodb["Survey"].find().to_list(10):  # would i need to add pagination?
         surveys.append(survey)
     return surveys
 
