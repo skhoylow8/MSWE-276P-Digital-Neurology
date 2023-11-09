@@ -4,8 +4,19 @@ import Table from '../components/Table';
 import NavBar from '../components/NavBar';
 import Modal from '../components/Modal';
 import Multiselect from '../components/Multiselect';
+import useSWR from 'swr'; 
+
+const surveyFetcher = (token) => fetch('http://localhost:8000/survey', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+    }).then(res => res.json())
 
 const Assessments = () => {
+    const { surveyData, errorSurveyData, isLoadingSurveyData } = useSWR('/survey', surveyFetcher)
+
     const surveys = [
         {label: "Demographics Survey", value: "Demographics Survey"},
         {label: "Migraine Survey", value: "Migraine Survey"},
@@ -72,7 +83,8 @@ const Assessments = () => {
                                 </svg>
                             </button>
                         </div>
-                        <Table page="assessments" data={assessmentData} />
+                        {!isLoadingSurveyData && <Table page="assessments" data={assessmentData} />}
+                        {isLoadingSurveyData && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                 </div>
 
