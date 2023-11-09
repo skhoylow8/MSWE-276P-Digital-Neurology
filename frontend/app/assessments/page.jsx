@@ -1,36 +1,30 @@
 'use client';
-import React, { useEffect} from 'react'
+import React, { useEffect, useState} from 'react'
 import Table from '../components/Table';
 import NavBar from '../components/NavBar';
 import Modal from '../components/Modal';
-import Multiselect from '../components/Multiselect';
+import { MultiSelect } from "react-multi-select-component";
 import useSWR from 'swr'; 
 
-const surveyFetcher = (token) => fetch('http://localhost:8000/survey', {
+const fetcher = async (url, token) => {
+    const response = await fetch(url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
-    }).then(res => res.json())
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch data');
+    }
+    return response.json();
+}
 
 const Assessments = () => {
-    const { surveyData, errorSurveyData, isLoadingSurveyData } = useSWR('/survey', surveyFetcher)
-
-    const surveys = [
-        {label: "Demographics Survey", value: "Demographics Survey"},
-        {label: "Migraine Survey", value: "Migraine Survey"},
-        {label: "Pain Survey", value: "Pain Survey"},
-        {label: "Memory Survey", value: "Memory Survey"},
-        {label: "Demographics Survey", value: "Demographics Survey 1"},
-        {label: "Migraine Survey", value: "Migraine Survey 1"},
-        {label: "Pain Survey", value: "Pain Survey 1"},
-        {label: "Memory Survey", value: "Memory Survey 1"},
-        {label: "Demographics Survey", value: "Demographics Survey 2"},
-        {label: "Migraine Survey", value: "Migraine Survey 2"},
-        {label: "Pain Survey", value: "Pain Survey 3"},
-        {label: "Memory Survey", value: "Memory Survey 3"},
-    ];
+    const { data, error, isLoading } = useSWR('http://localhost:8000/survey', fetcher)
+    const [surveyData, setSurveyData] = useState([])
+    const [surveysSelected, setSurveysSelected] = useState([]);
 
     const date = new Date(); 
 
@@ -49,19 +43,39 @@ const Assessments = () => {
     }, []);
 
     const handleCreateAssessment = () => {
-        const selectedSurveys = getSelectedSurveys(); // array of selected surveys
+        const selectedSurveys = surveysSelected;
+        console.log(selectedSurveys)
 
-        // make post request to create survey
+        // make post request to create assessment
     }
 
-    const getSelectedSurveys = () => {
-        const selectElement = document.getElementById("surveySelect"); // Replace with the actual ID
+    const handleCreateAssessmentModal = async () => {
+        document.getElementById("create-assessment-modal").showModal();
 
-        const selectedValues = Array.from(selectElement.selectedOptions).map(
-            (option) => option.value
-        );
+        // get survey data
+        const response = await fetch("http://localhost:8000/survey", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
+            },
+        });
+    
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+        
+        const responseData = await response.json();
 
-        return selectedValues;
+        let surveys = []
+        responseData.forEach(element => {
+            surveys.push({
+                label: element.name ? element.name : element.desc, 
+                value: element._id
+            })
+        });
+
+        setSurveyData(surveys)
     }
 
     return (
@@ -77,14 +91,14 @@ const Assessments = () => {
                     <div className="card-body">
                         <div className='flex flex-row justify-between'>
                             <h2 className="card-title text-stone-900 text-2xl">Assessments</h2>
-                            <button className="shadow-lg w-8 h-8 rounded-full flex items-center cursor-pointer hover:bg-stone-200 hover:shadow" onClick={()=>document.getElementById('create-assessment-modal').showModal()}>
+                            <button className="shadow-lg w-8 h-8 rounded-full flex items-center cursor-pointer hover:bg-stone-200 hover:shadow" onClick={handleCreateAssessmentModal}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-900 mx-auto">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </button>
                         </div>
-                        {!isLoadingSurveyData && <Table page="assessments" data={assessmentData} />}
-                        {isLoadingSurveyData && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
+                        {!isLoading && <Table page="assessments" data={assessmentData} />}
+                        {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                 </div>
 
@@ -99,7 +113,11 @@ const Assessments = () => {
                     <textarea className="textarea textarea-bordered w-full" placeholder="Consent Form..."></textarea>
                     <h4 className="text-lg text-stone-600 pt-4 pb-2">Surveys</h4>
                     <div className="w-full border-stone-400">
-                        <Multiselect data={surveys} />
+                    <MultiSelect
+                        options={surveyData}
+                        value={surveysSelected}
+                        onChange={setSurveysSelected}
+                    />
                     </div>
                     <div className="flex justify-center mt-4">
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button" onClick={handleCreateAssessment}>Create Assessment</button>

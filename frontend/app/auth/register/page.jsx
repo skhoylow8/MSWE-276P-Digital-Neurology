@@ -54,6 +54,7 @@ export const Register = (props) => {
         } 
 
         const result = await response.json();
+        console.log(result)
         const accessToken = result.access_token;
 
         window.localStorage.setItem("token", accessToken);
