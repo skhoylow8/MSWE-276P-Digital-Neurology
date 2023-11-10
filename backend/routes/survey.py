@@ -18,7 +18,8 @@ async def create_survey(request: Request, survey: Survey = Body(...)):
 @survey_router.get("/", response_description="Get all surveys")
 async def list_surveys(request: Request):
     surveys = []
-    for survey in request.app.mongodb["Survey"].find().to_list():  # would i need to add pagination?
+    survey_list = await request.app.mongodb["Survey"].find().to_list(10)
+    for survey in survey_list:  # would i need to add pagination?
         surveys.append(survey)
     return surveys
 
@@ -28,7 +29,7 @@ async def get_survey(id: str, request: Request):
     if (survey := await request.app.mongodb["Survey"].find_one({"_id":id})) is not None:
         return survey
 
-    return HTTPException(status_code=404, detail=f"Task {id} not found")
+    return HTTPException(status_code=404, detail=f"Survey {id} not found")
 
 
 # put, delete => do we need?
