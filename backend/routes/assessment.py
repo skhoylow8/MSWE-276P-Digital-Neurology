@@ -57,7 +57,7 @@ async def list_assessments(request: Request):
 async def get_assessment(id: str, request: Request):
     if (assessment := await request.app.mongodb["Assessment"].find_one({"_id": id})) is not None:
         surveys = []
-        for survey_id in assessment.survey_ids:
+        for survey_id in assessment.get('survey_ids'):
             surveys.append(await request.app.mongodb["Survey"].find_one({"_id": survey_id}))
         assessment = AssessmentDisplay(
             assessment=assessment,
