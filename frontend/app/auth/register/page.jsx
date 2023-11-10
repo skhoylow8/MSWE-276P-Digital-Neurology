@@ -44,21 +44,30 @@ export const Register = (props) => {
               "first_name": firstName,
               "last_name": lastName,
               "email": email,
+              "confirm_email": confirmEmail,
               "password": password,
+              "confirm_password": confirmPassword
             }),
         });
 
+        console.log(response)
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.detail);
         } 
 
         const result = await response.json();
-        console.log(result)
+        
         const accessToken = result.access_token;
+        const researcherID = result.researcher_id
+        const firstNameRes = result.researcher_name
+        const emailRes = result.researcher_email
 
         window.localStorage.setItem("token", accessToken);
         window.localStorage.setItem("authenticated", true);
+        window.localStorage.setItem("researcherID", researcherID);
+        window.localStorage.setItem("firstName", firstNameRes);
+        window.localStorage.setItem("email", emailRes);
 
         router.push('/dashboard')
 

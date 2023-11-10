@@ -31,9 +31,9 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
 
     return (
         <tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id} >
-            <td>{ name }</td>
-            <td className='w-1/2'>{ description }</td>
-            <td className=''>{ formatDate(createdOn) } </td>
+            <td>{ name ? name : 'Unknown' }</td>
+            <td className='w-1/2'>{ description ? description : 'Unknown' }</td>
+            <td className=''>{ createdOn ? formatDate(new Date(createdOn)) : formatDate(new Date()) } </td>
             <td className='flex flex-row justify-around'>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200" onClick={() => handleDownloadCSV(id)}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -91,8 +91,8 @@ const Table = ({ page, data }) => {
                         })
                     }
                     {
-                        page == 'assessments' && data.length > 0 && data.map((row) => {
-                            return <AssessmentRow key={row.id} id={row.id} name={row.name} description={row.description} createdOn={row.createdOn} consentText={row.consentText} />
+                        page == 'assessments' && data.length > 0 && data.map((row, index) => {
+                            return <AssessmentRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} consentText={row.consent_text} />
                         })
                     }
                     {

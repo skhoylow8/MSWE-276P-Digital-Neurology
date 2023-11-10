@@ -6,23 +6,24 @@ import Modal from '../components/Modal';
 import { MultiSelect } from "react-multi-select-component";
 import useSWR from 'swr'; 
 
-const fetcher = async (url, token) => {
+const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
     if (!response.ok) {
         throw new Error('Failed to fetch data');
     }
-    return response.json();
+
+    return await response.json();
 }
 
 const Assessments = () => {
-    const { data, error, isLoading } = useSWR('http://localhost:8000/survey', fetcher)
+    const { data, error, isLoading } = useSWR('http://localhost:8000/assessment', fetcher)
     const [surveyData, setSurveyData] = useState([])
     const [surveysSelected, setSurveysSelected] = useState([]);
 
@@ -42,12 +43,54 @@ const Assessments = () => {
         }
     }, []);
 
-    const handleCreateAssessment = () => {
-        const selectedSurveys = surveysSelected;
-        console.log(selectedSurveys)
+    const handleCreateAssessment = async (e) => {
+        e.preventDefault();
 
-        // make post request to create assessment
+        const surveyIDS = surveysSelected.map((survey) => survey.value);
+        const fileInput = document.getElementById('consentForm');
+        const file = fileInput.files[0];
+
+        const assessmentName = e.target.elements.assessmentName.value;
+        const assessmentDescription = e.target.elements.assessmentDesc.value;
+        const consentText = e.target.elements.consentFormText.value;
+        const researcherID = window.localStorage.getItem("researcherID");
+        const formData = new FormData();
+
+        formData.append('survey_ids', [...surveyIDS]);
+
+        if(file){
+            formData.append('consent_file', file);
+        } else if (consentText !== "") {
+            formData.append('consent_file', consentText);
+        } else {
+            alert("Please provide a consent form, either a file or plain text.")
+            return;
+        }
+
+        if(file && consentText !== "") {
+            alert("Please fill out only one field for the consent form. Either choose a file or fill out the text box.")
+        } else {
+            try {
+                // make post request to create assessment
+                const response = await fetch(`http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}`, {
+                    method: 'POST',
+                    headers: {
+                        // 'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
+                        'Accept': 'application/json',
+                    },
+                    body: formData
+                });
+            
+                const responseData = await response.json();
+                console.log(responseData)
+
+            } catch (error) {
+                console.error('Error submitting assessment:', error.message);
+            }
+        }        
     }
+    
 
     const handleCreateAssessmentModal = async () => {
         document.getElementById("create-assessment-modal").showModal();
@@ -97,31 +140,33 @@ const Assessments = () => {
                                 </svg>
                             </button>
                         </div>
-                        {!isLoading && <Table page="assessments" data={assessmentData} />}
+                        {!isLoading && <Table page="assessments" data={data} />}
                         {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                 </div>
 
                 {/* Create Assessment Modal */}
                 <Modal id="create-assessment-modal">
-                    <h3 className="text-stone-900 text-2xl pb-4">Create An Assessment</h3>
-                    <input type="text" placeholder="Assessment Name" className="input input-bordered w-full text-md" required />
-                    <textarea className="textarea textarea-bordered w-full mt-4" placeholder="Assessment Description..." required ></textarea>
-                    <h4 className="text-lg text-stone-600 pt-4 pb-2">Consent Form</h4>
-                    <input type="file" className="file-input file-input-bordered file-input-md w-full" />
-                    <div className="divider">OR</div>
-                    <textarea className="textarea textarea-bordered w-full" placeholder="Consent Form..."></textarea>
-                    <h4 className="text-lg text-stone-600 pt-4 pb-2">Surveys</h4>
-                    <div className="w-full border-stone-400">
-                    <MultiSelect
-                        options={surveyData}
-                        value={surveysSelected}
-                        onChange={setSurveysSelected}
-                    />
-                    </div>
-                    <div className="flex justify-center mt-4">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button" onClick={handleCreateAssessment}>Create Assessment</button>
-                    </div>
+                    <form  onSubmit={handleCreateAssessment}>
+                        <h3 className="text-stone-900 text-2xl pb-4">Create An Assessment</h3>
+                        <input id="assessmentName" type="text" placeholder="Assessment Name" className="input input-bordered w-full text-md" required />
+                        <textarea id="assessmentDesc" className="textarea textarea-bordered w-full mt-4" placeholder="Assessment Description..." required ></textarea>
+                        <h4 className="text-lg text-stone-600 pt-4 pb-2">Consent Form</h4>
+                        <input id="consentForm" type="file" className="file-input file-input-bordered file-input-md w-full" />
+                        <div className="divider">OR</div>
+                        <textarea id="consentFormText" className="textarea textarea-bordered w-full" placeholder="Consent Form..."></textarea>
+                        <h4 className="text-lg text-stone-600 pt-4 pb-2">Surveys</h4>
+                        <div className="w-full border-stone-400">
+                        <MultiSelect
+                            options={surveyData}
+                            value={surveysSelected}
+                            onChange={setSurveysSelected}
+                        />
+                        </div>
+                        <div className="flex justify-center mt-4">
+                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Create Assessment</button>
+                        </div>
+                    </form>
                 </Modal>
             </main>
         </div>
