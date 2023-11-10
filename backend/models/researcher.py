@@ -17,7 +17,7 @@ class Researcher(BaseModel):
     first_name: str = Field(...)
     last_name: str = Field(...)
     email: EmailStr = Field(...)
-    password: EmailStr = Field(...)
+    password: str = Field(...)
 
 
 class ResearcherLogin(BaseModel):

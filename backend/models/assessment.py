@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -12,6 +12,7 @@ class AssessmentRequest(BaseModel):
     desc: str = Field(...)
     survey_ids: List[str] = Field(...)
     researcher_id: str = Field(...)
+    consent_text: str = Field(None)
 
 
 class Assessment(BaseModel):
