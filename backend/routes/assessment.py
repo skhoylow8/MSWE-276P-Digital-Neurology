@@ -54,7 +54,7 @@ async def list_assessments(request: Request):
 
 
 @assessment_router.get("/{id}", response_description="Get an assessment")
-async def get_assessment(request: Request):
+async def get_assessment(id: str, request: Request):
     if (assessment := await request.app.mongodb["Assessment"].find_one({"_id": id})) is not None:
         surveys = []
         for survey_id in assessment.survey_ids:
