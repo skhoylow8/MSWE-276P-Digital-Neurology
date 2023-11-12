@@ -12,7 +12,7 @@ class AssessmentRequest(BaseModel):
     desc: str = Field(...)
     survey_ids: List[str] = Field(...)
     researcher_id: str = Field(...)
-    consent_text: str = Field(None)
+    consent_text: Optional[str] = Field(None)
 
 
 class Assessment(BaseModel):
