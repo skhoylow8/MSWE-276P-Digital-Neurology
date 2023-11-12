@@ -55,13 +55,15 @@ const Assessments = () => {
         const consentText = e.target.elements.consentFormText.value;
         const researcherID = window.localStorage.getItem("researcherID");
         const formData = new FormData();
+        let url;
 
         formData.append('survey_ids', [...surveyIDS]);
 
         if(file){
             formData.append('consent_file', file);
+            url = `http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}`;
         } else if (consentText !== "") {
-            formData.append('consent_file', consentText);
+            url = `http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}&consent_text=${consentText}`
         } else {
             alert("Please provide a consent form, either a file or plain text.")
             return;
@@ -72,7 +74,7 @@ const Assessments = () => {
         } else {
             try {
                 // make post request to create assessment
-                const response = await fetch(`http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}`, {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         // 'Content-Type': 'multipart/form-data',
@@ -83,7 +85,6 @@ const Assessments = () => {
                 });
             
                 const responseData = await response.json();
-                console.log(responseData)
 
             } catch (error) {
                 console.error('Error submitting assessment:', error.message);
