@@ -72,23 +72,25 @@ const Table = ({ page, data }) => {
         const consentRes = e.target.elements.consentQ.value;
         const firstName = e.target.elements.firstName.value;
         const lastName = e.target.elements.lastName.value;
+        const email = e.target.elements.email.value;
         const patientID = e.target.elements.patientID.value;
 
 
         // save patient data if they consent
         if(consentRes == "yes"){
-            console.log(firstName, lastName, patientID)
-            // const response = await fetch('http://localhost:8000/participant', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({
-            //         "first_name": firstName,
-            //         "last_name": lastName,
-            //         "email": email,
-            //     }),
-            // });
+            const response = await fetch('http://localhost:8000/participant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "_id": patientID,
+                    "first_name": firstName,
+                    "last_name": lastName,
+                    "email": email,
+                    "assessment_ids": [assessmentID],
+                }),
+            });
         } else {
             alert("Please see researcher for further instructions.");
             return;
@@ -158,9 +160,10 @@ const Table = ({ page, data }) => {
                         </RadioGroup>
                     </FormField>
                     <textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled></textarea>
+                    <input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required />
                     <input type="text" id="firstName" placeholder="First Name" className="input input-bordered w-full text-md my-1" required />
                     <input type="text" id="lastName" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
-                    <input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required />
+                    <input type="text" id="email" placeholder="Email" className="input input-bordered w-full text-md my-1" required />
                     <div className="flex justify-center mt-4">
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Start Assessment</button>
                     </div>
