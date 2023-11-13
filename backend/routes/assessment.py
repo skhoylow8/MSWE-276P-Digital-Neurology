@@ -32,7 +32,7 @@ async def create_assessment_request(
         name=assessment_request.get('name'),
         desc=assessment_request.get('desc'),
         consent_text=consent_text,
-        survey_ids=assessment_request.get('survey_ids'),
+        survey_ids=assessment_request.get('survey_ids')[0].split(','),
         researcher_id=assessment_request.get('researcher_id')
     )
 

@@ -29,7 +29,6 @@ export const Login = (props) => {
 
       const email = e.target.elements.email.value;
       const password = e.target.elements.password.value;
-      console.log(email, password);
 
       if(!(validEmail(email) && validPassword(password))){
           alert("The email or password entered is invalid. Please make sure they contain lowercase letters, digits, or one of these special characters['_', '-', '.'] as well as between 1 and 127 characters.");
@@ -57,10 +56,17 @@ export const Login = (props) => {
 
           if (response.ok) {
             const result = await response.json();
+
             const accessToken = result.access_token;
+            const researcherID = result.researcher_id
+            const firstName = result.researcher_name
+            const email = result.researcher_email
 
             window.localStorage.setItem("token", accessToken);
             window.localStorage.setItem("authenticated", true);
+            window.localStorage.setItem("researcherID", researcherID);
+            window.localStorage.setItem("firstName", firstName);
+            window.localStorage.setItem("email", email);
 
             router.push('/dashboard')
           } else {
