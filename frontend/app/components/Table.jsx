@@ -64,11 +64,51 @@ const Table = ({ page, data }) => {
         "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
     };
 
-    const handleStartAssessment = () => {
+    const handleStartAssessment = async(e) => {
+        e.preventDefault();
         const modal = document.getElementById('start-assessment-modal');
-        console.log(modal.dataset.id)
+        const assessmentID = modal.dataset.id;
 
-        // start survey using id
+        const consentRes = e.target.elements.consentQ.value;
+        const firstName = e.target.elements.firstName.value;
+        const lastName = e.target.elements.lastName.value;
+        const patientID = e.target.elements.patientID.value;
+
+
+        // save patient data if they consent
+        if(consentRes == "yes"){
+            console.log(firstName, lastName, patientID)
+            // const response = await fetch('http://localhost:8000/participant', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         "first_name": firstName,
+            //         "last_name": lastName,
+            //         "email": email,
+            //     }),
+            // });
+        } else {
+            alert("Please see researcher for further instructions.");
+            return;
+        }
+
+        // get survey questions using id
+        const response = await fetch(`http://localhost:8000/assessment/${assessmentID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
+            },
+        });
+    
+        if (!response.ok) {
+            throw new Error('Failed to fetch data');
+        }
+    
+        const responseData = await response.json();
+        console.log(responseData)
     }
 
     return (
@@ -104,25 +144,27 @@ const Table = ({ page, data }) => {
             </table>
             {/* Start Assessment Modal */}
             <Modal id="start-assessment-modal">
-                <h3 className="text-stone-900 text-2xl pb-4">Pre Screening Questionaire</h3>
-                <FormField
-                    // helperText="This is helper text"
-                    // errorText="This is an error message"
-                    id='consent-form-q'
-                    className='pb-4'
-                >
-                    <RadioGroup label="Do you consent to completing this assessment?" name="consentQ" defaultValue="1">
-                        <RadioOption value="1" label="Yes" />
-                        <RadioOption value="2" label="No" />
-                    </RadioGroup>
-                </FormField>
-                <textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled></textarea>
-                <input type="text" placeholder="First Name" className="input input-bordered w-full text-md my-1" required />
-                <input type="text" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
-                <input type="text" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required />
-                <div className="flex justify-center mt-4">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="button" onClick={handleStartAssessment}>Start Assessment</button>
-                </div>
+                <form onSubmit={handleStartAssessment}>
+                    <h3 className="text-stone-900 text-2xl pb-4">Pre Screening Questionaire</h3>
+                    <FormField
+                        // helperText="This is helper text"
+                        // errorText="This is an error message"
+                        id='consentFormQ'
+                        className='pb-4'
+                    >
+                        <RadioGroup label="Do you consent to completing this assessment?" name="consentQ" defaultValue="1">
+                            <RadioOption value="yes" label="Yes" />
+                            <RadioOption value="no" label="No" />
+                        </RadioGroup>
+                    </FormField>
+                    <textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled></textarea>
+                    <input type="text" id="firstName" placeholder="First Name" className="input input-bordered w-full text-md my-1" required />
+                    <input type="text" id="lastName" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
+                    <input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required />
+                    <div className="flex justify-center mt-4">
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Start Assessment</button>
+                    </div>
+                </form>
             </Modal>
         </div>
     )

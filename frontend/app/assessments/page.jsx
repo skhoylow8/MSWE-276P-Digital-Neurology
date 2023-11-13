@@ -44,8 +44,6 @@ const Assessments = () => {
     }, []);
 
     const handleCreateAssessment = async (e) => {
-        e.preventDefault();
-
         const surveyIDS = surveysSelected.map((survey) => survey.value);
         const fileInput = document.getElementById('consentForm');
         const file = fileInput.files[0];
@@ -59,25 +57,27 @@ const Assessments = () => {
 
         formData.append('survey_ids', [...surveyIDS]);
 
-        if(file){
+        if(file){ // if there is a file
             formData.append('consent_file', file);
             url = `http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}`;
-        } else if (consentText !== "") {
+        } else if (consentText !== "") { // if there is consent in the textbox
             url = `http://localhost:8000/assessment/?name=${assessmentName}&desc=${assessmentDescription}&researcher_id=${researcherID}&consent_text=${consentText}`
-        } else {
+        } else { // if neither were chose
+            e.preventDefault();
             alert("Please provide a consent form, either a file or plain text.")
             return;
         }
 
-        if(file && consentText !== "") {
+        if(file && consentText !== "") { // if both the file and box were provided
+            e.preventDefault();
             alert("Please fill out only one field for the consent form. Either choose a file or fill out the text box.")
+            return;
         } else {
             try {
                 // make post request to create assessment
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        // 'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
                         'Accept': 'application/json',
                     },
@@ -85,7 +85,6 @@ const Assessments = () => {
                 });
             
                 const responseData = await response.json();
-
             } catch (error) {
                 console.error('Error submitting assessment:', error.message);
             }
