@@ -61,7 +61,9 @@ const formatQuestions = (data) => {
 
 const StartAssessment = () => {
     const searchParams = useSearchParams();
-    const assessmentID = searchParams.get('data');
+    const ids = searchParams.get('data').split("_");
+    const assessmentID = ids[0];
+    const patientID = ids[1];
 
     const { data, error, isLoading } = useSWR(`http://localhost:8000/assessment/${assessmentID}`, fetcher)
 
@@ -73,7 +75,7 @@ const StartAssessment = () => {
     return (
         <>
             {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
-            {!isLoading && <div id="surveyElement" className='bg-gray-100 absolute top-0 left-0 right-0 bottom-0 h-80vh'><SurveyComponent data={data} id={assessmentID} /></div> } {/*<SurveyComponent data={data}/>*/}
+            {!isLoading && <div id="surveyElement" className='bg-gray-100 absolute top-0 left-0 right-0 bottom-0 h-80vh'><SurveyComponent data={data} assessmentID={assessmentID} patientID={patientID} /></div> } {/*<SurveyComponent data={data}/>*/}
         </>
     )
 }

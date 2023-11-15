@@ -5,7 +5,7 @@ import { Survey } from "survey-react-ui";
 import "survey-core/defaultV2.min.css";
 import theme from "../../public/utils/survey_theme.json";
 
-function SurveyComponent({ data, id }) {
+function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
@@ -32,12 +32,15 @@ function SurveyComponent({ data, id }) {
         });
 
         const formattedResults = formatSurveyResults(surveryResults);
-        
+
         // send formatted survey results
         // options.showSaveError();
+        const currentDate = new Date();
         const dataToSend = {
-            assessment_id: id,
+            assessment_id: assessmentID,
+            patient_id: patientID,
             data: formattedResults,
+            created_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
         }
 
         console.log(dataToSend)

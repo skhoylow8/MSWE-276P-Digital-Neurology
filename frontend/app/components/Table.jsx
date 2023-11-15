@@ -99,7 +99,7 @@ const Table = ({ page, data }) => {
             return;
         }
 
-        router.push(`/assessments/start?data=${encodeURIComponent(assessmentID)}`)
+        router.push(`/assessments/start?data=${encodeURIComponent(assessmentID + "_" + patientID)}`)
     }
 
     return (
