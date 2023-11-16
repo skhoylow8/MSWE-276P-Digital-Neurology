@@ -40,7 +40,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
             assessment_id: assessmentID,
             patient_id: patientID,
             data: formattedResults,
-            created_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
+            completed_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
         }
 
         console.log(JSON.stringify(dataToSend))
