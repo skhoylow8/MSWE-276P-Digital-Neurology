@@ -43,7 +43,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
             created_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
         }
 
-        console.log(dataToSend)
+        console.log(JSON.stringify(dataToSend))
 
         options.showSaveSuccess();
     });
