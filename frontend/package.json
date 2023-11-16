@@ -17,6 +17,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-multi-select-component": "^4.3.4",
+    "survey-react-ui": "^1.9.117",
     "swr": "^2.2.4",
     "universal-cookie": "^6.1.1"
   },

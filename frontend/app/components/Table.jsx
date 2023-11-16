@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from '@qualtrics/ui-react';
+import { useRouter } from "next/navigation";
 
 const formatDate = (date) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -64,6 +65,8 @@ const Table = ({ page, data }) => {
         "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
     };
 
+    const router = useRouter();
+
     const handleStartAssessment = async(e) => {
         e.preventDefault();
         const modal = document.getElementById('start-assessment-modal');
@@ -96,21 +99,7 @@ const Table = ({ page, data }) => {
             return;
         }
 
-        // get survey questions using id
-        const response = await fetch(`http://localhost:8000/assessment/${assessmentID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
-            },
-        });
-    
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
-        }
-    
-        const responseData = await response.json();
-        console.log(responseData)
+        router.push(`/assessments/start?data=${encodeURIComponent(assessmentID + "_" + patientID)}`)
     }
 
     return (
