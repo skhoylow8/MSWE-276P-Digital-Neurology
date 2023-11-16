@@ -58,11 +58,34 @@ const ParticipantRow = ({ id, name, status, completedOn }) => {
     )
 }
 
+const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ }) => {
+    const router = useRouter();
+
+    const handleEditSurvey = () => {
+        router.push(`/surveys/edit?data=${id}`)
+    }
+
+    return (
+        <tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id} onClick={handleEditSurvey}>
+            <td>{ name ? name : 'Unknown' }</td>
+            <td className='w-1/2'>{ description ? description : 'Unknown' }</td>
+            <td>{ totalNumOfQ ? totalNumOfQ : 0 }</td>
+            <td>{ createdOn ? formatDate(new Date(createdOn)) : formatDate(new Date()) } </td>
+            <td className='flex flex-row justify-around'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </td>
+        </tr>
+    )
+}
+
 const Table = ({ page, data }) => {
     const tableHeaders = {
         "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
         "assessments": ["Assessment Name", "Assessment Description", "Created On"],
         "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
+        "surveys": ["Survey ID", "Survey Description", "Number of Questions", "Created On"],
     };
 
     const router = useRouter();
@@ -129,6 +152,11 @@ const Table = ({ page, data }) => {
                     {
                         page == 'participants' && data.length > 0 && data.map((row) => {
                             return <ParticipantRow key={row.participantID} id={row.participantID} name={row.assessmentName} status={row.status} completedOn={row.completedOn} />
+                        })
+                    }
+                    {
+                        page == 'surveys' && data.length > 0 && data.map((row, index) => {
+                            return <SurveyRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} totalNumOfQ={row.questions.length} />
                         })
                     }
                 </tbody>
