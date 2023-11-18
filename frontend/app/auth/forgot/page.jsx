@@ -8,7 +8,7 @@ import Link from "next/link";
 export const ForgotPassword = (props) => {
   const [email, setEmail] = useState("");
   const [authenticated, setAuthenticated] = useState(
-    localStorage.getItem(localStorage.getItem("authenticated") || false)
+    localStorage.getItem("authenticated") || false
   );
   // const navigate = useNavigate();
 

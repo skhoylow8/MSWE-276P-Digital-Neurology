@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request, Body
 from fastapi.encoders import jsonable_encoder
+from fastapi.openapi.models import Response
 from fastapi.responses import JSONResponse
 from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
@@ -24,7 +25,7 @@ async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)
             detail="Emails do not match"
         )
     if researcher.password != researcher.confirm_password:
-        raise  HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Passwords do not match"
         )
@@ -59,11 +60,15 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password"
         )
-    return {
-        "access_token": create_access_token(data={"user_id": user['_id']}),
-        "token_type": "bearer",
-        "researcher_id": user['_id'],
-        "researcher_name": user['first_name'],
-        "researcher_email": user['email'],
-    }
 
+    token = create_access_token(data={"user_id": user['_id']})
+    return JSONResponse(
+        content={
+            "access_token": token,
+            "token_type": "bearer",
+            "researcher_id": user['_id'],
+            "researcher_name": user['first_name'],
+            "researcher_email": user['email'],
+        },
+        headers={"Set-Cookie": f'X-AUTH={token}'}
+    )
