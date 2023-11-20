@@ -19,27 +19,6 @@ auth_router = APIRouter()
 @auth_router.post('/signup', response_description="Create new user")
 async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)):
 
-   
-    '''message = MIMEMultipart()
-    message["From"] = ""
-    message["To"] = ""
-    message["Subject"] = "send email"
-
-    context=ssl._create_unverified_context()
-    body = 'This is the body of your email'
-    message.attach(MIMEText(body, 'plain'))
-
-    try:
-        with SMTP(HOST, PORT) as server:
-            server.ehlo()
-            server.starttls(context=context)
-            server.ehlo()
-            server.login(USERNAME, "password")
-            server.sendmail(USERNAME, "email", message.as_string())
-            server.quit() 
-        
-    except Exception as e:
-        return {"status": 500, "errors": e}'''
     # querying database to check if user already exists
     existing_researcher = await request.app.mongodb["Researcher"].find_one({"email": researcher.email})
     if existing_researcher is not None:
@@ -95,4 +74,28 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         "researcher_name": user['first_name'],
         "researcher_email": user['email'],
     }
+
+'''@auth_router.post('/reset', response_description="Reset password using rest password link")
+async def reset(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    message = MIMEMultipart()
+    message["From"] = ""
+    message["To"] = ""
+    message["Subject"] = "send email"
+
+    context=ssl._create_unverified_context()
+    body = 'send link for reset password page'
+    message.attach(MIMEText(body, 'plain'))
+
+    try:
+        with SMTP(HOST, PORT) as server:
+            server.ehlo()
+            server.starttls(context=context)
+            server.ehlo()
+            server.login(USERNAME, "password")
+            server.sendmail(USERNAME, "email", message.as_string())
+            server.quit() 
+        
+    except Exception as e:
+        return {"status": 500, "errors": e}'''
+    
 
