@@ -15,3 +15,4 @@ class Survey(BaseModel):
     name: str = Field(...)
     desc: str = Field(...)
     questions: list[Question]
+    researcherId: str 
