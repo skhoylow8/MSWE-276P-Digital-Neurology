@@ -1,3 +1,5 @@
+import io
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,7 +48,6 @@ import requests
 @app.get("/app/{path:path}")
 async def proxy(request: Request, path: str, scheme: str = "http"):
     url = f"{scheme}://localhost:3000/app/{path}"
-    print("iahsjfbksdfboweuiFG3FBSJDKLsjVBHLWEUIAGeioFLVBQEIFCOB:L>Qwehigrv78HPGVO;EWFGV")
     print(F"URL=({url})")
 
     response = requests.get(url, headers=request.headers, params=request.query_params)
