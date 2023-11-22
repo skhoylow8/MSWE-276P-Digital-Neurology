@@ -73,12 +73,7 @@ const EditSurvey = () => {
     }
 
     const handleUpdateSurvey = async () => {
-        console.log(JSON.stringify({
-            "name": data.name,
-            "desc": data.desc,
-            "questions": questions,
-        }))
-        // make post reuqest to create survey
+        // make put reuqest to update survey
         const response = await fetch(`http://localhost:8000/survey/${surveyID}`, {
             method: 'PUT',
             headers: {
@@ -89,6 +84,7 @@ const EditSurvey = () => {
                 "name": data.name,
                 "desc": data.desc,
                 "questions": questions,
+                "researcherId": window.localStorage.getItem('researcherID'),
             }),
         });
 

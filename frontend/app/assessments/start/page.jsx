@@ -1,6 +1,6 @@
 'use client';
-import React from 'react';
-import { useSearchParams } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from 'swr'; 
 import SurveyComponent from "../../components/SurveyComponent";
 
@@ -30,7 +30,7 @@ const formatQuestions = (data) => {
     let pages = []
     const qType = {
         "mc": "radiogroup", // includes multiple choice
-        "sc": "text", // should be "rating" but need a min/max val, // includes scale/rating
+        "sc": "rating", // should be "rating" but need a min/max val, // includes scale/rating
         "fr": "comment", // includes free response
         "cb": "checkbox", // includes multiple answers
         "yn": "boolean", // includes yes/no 
@@ -43,7 +43,9 @@ const formatQuestions = (data) => {
                 "name": surveyID + "_" + question._id,
                 "title": question.text,
                 "type": qType[question.type],
-                "choices": question.choices
+                "choices": question.choices,
+                "rateMin": question.type=='sc'? parseInt(question.choices[0]): 0,
+                "rateMax": question.type=='sc'? parseInt(question.choices[1]): 1,
             }}
             pages.push(elements);
         });
@@ -61,11 +63,38 @@ const formatQuestions = (data) => {
 
 const StartAssessment = () => {
     const searchParams = useSearchParams();
+    const router = useRouter();
+
     const ids = searchParams.get('data').split("_");
     const assessmentID = ids[0];
     const patientID = ids[1];
 
     const { data, error, isLoading } = useSWR(`http://localhost:8000/assessment/${assessmentID}`, fetcher)
+
+    useEffect(() => {
+        const handleBackButton = (event) => {
+          // You can add additional conditions if needed
+          // For example, only redirect if the user is on a specific page
+          if (router.pathname !== '/assessments/start') {
+            // Log user out if they press back button
+            window.localStorage.setItem("token", null);
+            window.localStorage.setItem("authenticated", false);
+            window.localStorage.setItem("researcherID", null);
+            window.localStorage.setItem("firstName", null);
+            window.localStorage.setItem("email", null);
+
+            router.push('/');
+          }
+        };
+    
+        // Listen for the 'popstate' event
+        window.addEventListener('popstate', handleBackButton);
+    
+        // Cleanup the event listener when the component is unmounted
+        return () => {
+          window.removeEventListener('popstate', handleBackButton);
+        };
+    }, [router]);
 
     if (error) {
         console.error('Error fetching data:', error);

@@ -67,6 +67,7 @@ const CreateSurvey = () => {
                 "name": surveyName,
                 "desc": surveyDesc,
                 "questions": questions,
+                "researcherId": window.localStorage.getItem('researcherID'),
             }),
         });
 
