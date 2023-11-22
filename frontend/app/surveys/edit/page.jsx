@@ -8,6 +8,7 @@ import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
 import Modal from '@/app/components/Modal';
+import EditableLabel from 'react-inline-editing';
 
 const fetcher = async (url) => {
     const response = await fetch(url, {
@@ -34,10 +35,14 @@ const EditSurvey = () => {
     const { data, error, isLoading } = useSWR(`http://localhost:8000/survey/${surveyID}`, fetcher)
     const [questionType, setQuestionType] = useState('mc');
     const [questions, setQuestions] = useState([]); 
+    const [surveyName, setSurveyName] = useState("");
+    const [surveyDesc, setSurveyDesc] = useState("");
     const [counter, setCounter] = useState(0);
 
     if(!isLoading && counter == 0){
-        setQuestions(data.questions)
+        setQuestions(data.questions);
+        setSurveyName(data.name);
+        setSurveyDesc(data.desc);
         setCounter(1);
     }
 
@@ -81,8 +86,8 @@ const EditSurvey = () => {
                 'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
             },
             body: JSON.stringify({
-                "name": data.name,
-                "desc": data.desc,
+                "name": surveyName,
+                "desc": surveyDesc,
                 "questions": questions,
                 "researcherId": window.localStorage.getItem('researcherID'),
             }),
@@ -104,20 +109,36 @@ const EditSurvey = () => {
                 <header className="bg-white shadow ">
                     <div className="max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Edit Survey</h1>
+                        <p className="text-stone-900">Please remember to save your work before navigating away.</p>
                     </div>
                 </header>
                 <main>
                     <div className="card bg-base-100 drop-shadow-xl m-5">
                         <div className="card-body text-stone-900">
                             <div className='flex flex-row justify-between'>
-                                <h2 className="card-title text-stone-900 text-2xl">{data.name}</h2>
+                                <h2 className="card-title text-stone-900 text-2xl">
+                                    <EditableLabel
+                                        text={surveyName}
+                                        onFocusOut={(text) => {
+                                            setSurveyName(text);
+                                        }}
+                                        aria-label="Survey Name"
+                                    />
+                                </h2>
                                 <button className="shadow-lg w-8 h-8 rounded-full flex items-center cursor-pointer hover:bg-stone-200 hover:shadow" onClick={()=>document.getElementById('add-question-modal').showModal()}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-900 mx-auto">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </button>
                             </div>
-                            <p>{data.desc}</p>
+                            <EditableLabel
+                                text={surveyDesc}
+                                inputWidth='100%'
+                                onFocusOut={(text) => {
+                                    setSurveyDesc(text);
+                                }}
+                                aria-label="Survey Description"
+                            />
                             <div id="questionContainer">
                                 {
                                     questions.map((q, index) => {

@@ -16,6 +16,7 @@
     "next": "14.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-inline-editing": "^1.0.10",
     "react-multi-select-component": "^4.3.4",
     "survey-react-ui": "^1.9.117",
     "swr": "^2.2.4",
