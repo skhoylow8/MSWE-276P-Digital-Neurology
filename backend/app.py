@@ -10,7 +10,7 @@ from routes.auth import auth_router
 from routes.participant import participant_router
 from routes.survey import survey_router
 from settings import settings
-
+from fastapi.responses import FileResponse
 app = FastAPI()
 
 app.add_middleware(
@@ -40,7 +40,7 @@ app.include_router(auth_router, tags=["auth"], prefix="")
 app.include_router(assessment_router, tags=["assessments"], prefix="/assessment")
 
 from starlette.requests import Request
-from starlette.responses import PlainTextResponse
+from starlette.responses import PlainTextResponse, StreamingResponse
 
 import requests
 
@@ -52,6 +52,17 @@ async def proxy(request: Request, path: str, scheme: str = "http"):
 
     response = requests.get(url, headers=request.headers, params=request.query_params)
     return PlainTextResponse(content=response.text, status_code=response.status_code,
+                             media_type=response.headers['content-type'])
+
+
+@app.get("/images/{path:path}")
+async def proxy(request: Request, path: str, scheme: str = "http"):
+    url = f"{scheme}://localhost:3000/app/images/{path}"
+    print(F"ASSET_URL=({url})")
+
+    response = requests.get(url, headers=request.headers, params=request.query_params)
+
+    return PlainTextResponse(content=response.content, status_code=response.status_code,
                              media_type=response.headers['content-type'])
 
 
