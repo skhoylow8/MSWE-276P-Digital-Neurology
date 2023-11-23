@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from models.researcher import ResearcherSignUp, Researcher
-from utils.auth import get_hashed_password, verify_password, create_access_token
+from utils.auth import get_hashed_password, verify_password, create_access_token, get_current_user
 
 auth_router = APIRouter()
 
@@ -78,3 +78,19 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         },
         headers={"Set-Cookie": f'X-AUTH={token}'}
     )
+
+
+@auth_router.post('/logout', response_description="Logout user")
+async def logout(current_user: str = Depends(get_current_user)):
+    # Perform additional actions if needed (e.g., token invalidation, session clearance)
+    # In a real application, you might want to implement token blacklisting or revocation mechanisms
+
+    # Clear session or perform any cleanup required
+    # For example, if you have a session management system or cache, clear the user's session data
+
+    # Respond with a message confirming successful logout
+    response = JSONResponse(
+        content={"message": "Logged out successfully"},
+        headers={"Set-Cookie": "X-AUTH=; HttpOnly; Secure; SameSite=None; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT"}
+    )
+    return response
