@@ -20,7 +20,7 @@ async def create_survey(request: Request, survey: Survey = Body(...)):
 @survey_router.get("/", response_description="Get all surveys")
 async def list_surveys(request: Request):
     surveys = []
-    survey_list = await request.app.mongodb["Survey"].find().to_list(10)
+    survey_list = await request.app.mongodb["Survey"].find().to_list(length=None)
     for survey in survey_list:  # would i need to add pagination?
         surveys.append(survey)
     return surveys
@@ -34,4 +34,30 @@ async def get_survey(id: str, request: Request):
     return HTTPException(status_code=404, detail=f"Survey {id} not found")
 
 
-# put, delete => do we need?
+@survey_router.get("/{id}", response_description="Get a single survey")
+async def get_survey(id: str, request: Request):
+    if (survey := await request.app.mongodb["Survey"].find_one({"_id":id})) is not None:
+        return survey
+
+    return HTTPException(status_code=404, detail=f"Survey {id} not found")
+
+
+@survey_router.put("/{id}", response_description="Update Survey")
+async def update_survey(request: Request, id: str, surveyReq: Survey = Body(...)):
+    surveyReq = jsonable_encoder(surveyReq)
+    surveyReq.pop("_id", None)
+    if (survey := await request.app.mongodb["Survey"].find_one({"_id":id})) is not None:
+        survey = await request.app.mongodb["Survey"].find_one_and_update({"_id": id},{
+           
+            "$set":dict(surveyReq)
+        })
+        created_survey = await request.app.mongodb["Survey"].find_one({"_id": id})
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_survey)
+
+    return HTTPException(status_code=404, detail=f"Survey {id} not found")
+
+
+
+
+
+#  delete => do we need?
