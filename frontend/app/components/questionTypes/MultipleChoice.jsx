@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { RadioGroup, RadioOption } from '@qualtrics/ui-react';
 
-const MultipleChoice = ({ question, mode, i }) => {
+const MultipleChoice = ({ question, mode, i, onStateChange }) => {
     const [value, setValue] = useState();
     function handleChange(event) {
       setValue(event.target.value);
@@ -12,6 +12,7 @@ const MultipleChoice = ({ question, mode, i }) => {
         document.getElementById('editQuestionTitle').value = question.text;
         document.getElementById('editQuestionChoices').value = question.choices.join(',');
         document.getElementById('editQuestionType').value = question.type;
+        onStateChange(question.type);
         document.getElementById('editQuestionIndex').value = i;
 
         document.getElementById('edit-question-modal').showModal()

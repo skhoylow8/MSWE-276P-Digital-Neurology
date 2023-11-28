@@ -46,6 +46,10 @@ const DuplicateSurvey = () => {
 		setCounter(1);
 	}
 
+	const handleStateChange = (newState) => {
+        setQuestionType(newState);
+    };
+	
 	const handleAddQuestion = (e) => {
 		e.preventDefault()
 		const question = e.target.elements.questionTitle.value;
@@ -143,15 +147,15 @@ const DuplicateSurvey = () => {
 								{
 									questions.map((q, index) => {
 										if(q.type == 'mc'){
-											return <div key={index}><MultipleChoice question={q} mode="edit" i={index} /></div>
+											return <div key={index}><MultipleChoice question={q} mode="edit" i={index} onStateChange={handleStateChange} /></div>
 										} else if(q.type == 'yn'){
-											return <div key={index}> <MultipleChoice question={q} mode="edit" i={index} /> </div>
+											return <div key={index}> <MultipleChoice question={q} mode="edit" i={index} onStateChange={handleStateChange} /> </div>
 										} else if(q.type == 'sc'){
-											return <div key={index}><Rating question={q} mode="edit" i={index} /></div>
+											return <div key={index}><Rating question={q} mode="edit" i={index} onStateChange={handleStateChange} /></div>
 										} else if(q.type == 'fr'){
-											return <div key={index}><FreeResponse question={q} mode="edit" i={index} /></div>
+											return <div key={index}><FreeResponse question={q} mode="edit" i={index} onStateChange={handleStateChange} /></div>
 										} else if(q.type == 'cb'){
-											return <div key={index}><CheckBox question={q} mode="edit" i={index} /></div>
+											return <div key={index}><CheckBox question={q} mode="edit" i={index} onStateChange={handleStateChange} /></div>
 										}
 									})
 								}

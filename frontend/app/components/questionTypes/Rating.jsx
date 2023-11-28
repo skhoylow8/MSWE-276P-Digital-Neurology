@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label, Slider } from '@qualtrics/ui-react';
 
-const Rating = ({ question, mode, i }) => {
+const Rating = ({ question, mode, i, onStateChange }) => {
     const min = parseInt(question.choices[0]);
     const max = parseInt(question.choices[1]);
 
@@ -9,6 +9,7 @@ const Rating = ({ question, mode, i }) => {
         document.getElementById('editQuestionTitle').value = question.text;
         document.getElementById('editQuestionChoices').value = question.choices.join(',');
         document.getElementById('editQuestionType').value = question.type;
+        onStateChange(question.type);
         document.getElementById('editQuestionIndex').value = i;
 
         document.getElementById('edit-question-modal').showModal()

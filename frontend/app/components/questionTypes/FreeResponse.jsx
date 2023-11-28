@@ -1,10 +1,11 @@
 import React from 'react'
 
-const FreeResponse = ({ question, mode, i }) => {
+const FreeResponse = ({ question, mode, i, onStateChange }) => {
   const handleEditQuestion = () => {
     document.getElementById('editQuestionTitle').value = question.text;
     document.getElementById('editQuestionChoices').value = question.choices.join(',');
     document.getElementById('editQuestionType').value = question.type;
+    onStateChange(question.type);
     document.getElementById('editQuestionIndex').value = i;
 
     document.getElementById('edit-question-modal').showModal()
