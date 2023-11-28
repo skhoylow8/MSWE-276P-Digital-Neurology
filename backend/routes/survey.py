@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Request, Body, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 
 from models.survey import Survey
 
 survey_router = APIRouter()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @survey_router.post("/", response_description="Add new survey")
 async def create_survey(request: Request, survey: Survey = Body(...)):

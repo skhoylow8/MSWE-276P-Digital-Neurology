@@ -63,7 +63,6 @@ export const Register = (props) => {
         const firstNameRes = result.researcher_name
         const emailRes = result.researcher_email
 
-        window.localStorage.setItem("token", accessToken);
         window.localStorage.setItem("authenticated", true);
         window.localStorage.setItem("researcherID", researcherID);
         window.localStorage.setItem("firstName", firstNameRes);
