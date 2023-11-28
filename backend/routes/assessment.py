@@ -1,4 +1,6 @@
 import os
+from asyncio import Future
+from typing import Annotated
 
 from fastapi import APIRouter, Request, HTTPException, status, File, Depends, UploadFile, Form
 from fastapi.encoders import jsonable_encoder
@@ -6,6 +8,7 @@ from fastapi.responses import JSONResponse
 
 from models.assessment import AssessmentRequest, Assessment, AssessmentDisplay
 from utils.misc import convert_file_to_text
+from utils.auth import get_current_user
 
 assessment_router = APIRouter()
 
@@ -13,9 +16,12 @@ assessment_router = APIRouter()
 @assessment_router.post("/", response_description="Add new assessment request")
 async def create_assessment_request(
         request: Request,
+        user: Annotated[Future, Depends(get_current_user)],
         assessment_request: AssessmentRequest = Depends(),
         consent_file: UploadFile = File(None)
 ):
+    u = await user
+    print(u)
     assessment_request = assessment_request.model_dump()
     if not consent_file and not assessment_request.get('consent_text'):
         raise HTTPException(status_code=400, detail="Consent not provided")
@@ -45,16 +51,18 @@ async def create_assessment_request(
 
 
 @assessment_router.get("/", response_description="Get all assessments")
-async def list_assessments(request: Request):
+async def list_assessments(request: Request, user: Annotated[Future, Depends(get_current_user)]):
+    user = await user  # TODO remove this
     assessments = []
     sort_criteria = [("created_on", -1)]
-    for assessment in await request.app.mongodb["Assessment"].find().sort(sort_criteria).to_list(10):
+    find_criteria = {"researcher_id": user['_id']}
+    for assessment in await request.app.mongodb["Assessment"].find(find_criteria).sort(sort_criteria).to_list(10):
         assessments.append(assessment)
     return assessments
 
 
 @assessment_router.get("/{id}", response_description="Get an assessment")
-async def get_assessment(id: str, request: Request):
+async def get_assessment(id: str, request: Request, user: Annotated[Future, Depends(get_current_user)]):
     if (assessment := await request.app.mongodb["Assessment"].find_one({"_id": id})) is not None:
         surveys = []
         for survey_id in assessment.get('survey_ids'):

@@ -7,7 +7,6 @@ const NavBar = (props) => {
     const router = useRouter();
 
     const handleLogout = (e) =>{
-        window.localStorage.setItem("token", null);
         window.localStorage.setItem("authenticated", false);
         window.localStorage.setItem("researcherID", null);
         window.localStorage.setItem("firstName", null);

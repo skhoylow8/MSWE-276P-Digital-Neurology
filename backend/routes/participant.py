@@ -9,6 +9,7 @@ from models.participant import Participant
 participant_router = APIRouter()
 
 
+
 @participant_router.post("/", response_description="Add new participant")
 async def create_participant(request: Request, participant: Participant = Body(...)):
    
