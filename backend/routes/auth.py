@@ -75,7 +75,9 @@ async def create_user(request: Request, researcher: ResearcherSignUp = Body(...)
         content={
             "access_token": token,
             "token_type": "bearer",
-            "researcher": created_researcher
+            "researcher_id": created_researcher['_id'],
+            "researcher_name": created_researcher['first_name'],
+            "researcher_email": created_researcher['email'],
         },
         headers={"Set-Cookie": f'X-AUTH={token}'}
     )
