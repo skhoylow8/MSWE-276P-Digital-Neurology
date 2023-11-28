@@ -28,6 +28,7 @@ const NavBar = (props) => {
                                 <Link href="/dashboard" className={props.page=="dashboard"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"} aria-current="page">Dashboard</Link>
                                 <Link href="/assessments" className={props.page=="assessments"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Assessments</Link>
                                 <Link href="/participants" className={props.page=="participants"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Participants</Link>
+                                <Link href="/surveys" className={props.page=="surveys"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Surveys</Link>
                             </div>
                         </div>
                     </div>
@@ -75,6 +76,7 @@ const NavBar = (props) => {
                                 <Link href="/dashboard" className={props.page=="dashboard" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"} aria-current="page">Dashboard</Link>
                                 <Link href="/assessments" className={props.page=="assessments" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Assessments</Link>
                                 <Link href="/participants" className={props.page=="participants" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Participants</Link>
+                                <Link href="/participants" className={props.page=="surveys" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Surveys</Link>
                             </div>
                             <div className="border-t border-gray-700 pb-3 pt-4">
                                 <div className="flex flex-col px-5">

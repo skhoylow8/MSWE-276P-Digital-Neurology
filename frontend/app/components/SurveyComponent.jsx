@@ -103,37 +103,4 @@ function SurveyComponent({ data, assessmentID, patientID }) {
     );
 }
 
-// const root = ReactDOM.createRoot(document.getElementById("surveyElement"));
-// root.render(<SurveyComponent />);
-
-// function SurveyComponent({ data }) {
-//     const survey = new Model(data);
-
-//     // survey.onComplete.add((sender, options) => {
-//     //     console.log(JSON.stringify(sender.data, null, 3));
-//     //     console.log(survey.data)
-//     // });
-//     survey.onComplete.add((survey) => {
-//         const resultData = [];
-//         for (const key in survey.data) {
-//           const question = survey.getQuestionByName(key);
-//           if (!!question) {
-//             const item = {
-//               name: key,
-//               value: question.value,
-//               title: question.displayValue,
-//               displayValue: question.displayValue
-//             };
-//             resultData.push(item);
-//           }
-//         }
-//         // ...
-//         // Send `resultData` to your web server
-//         // ...
-//         console.log(resultData)
-//     });
-
-//     return (<Survey model={survey} />);
-// }
-
 export default SurveyComponent;
