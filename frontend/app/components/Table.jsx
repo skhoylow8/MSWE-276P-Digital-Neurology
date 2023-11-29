@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
 import { useRouter } from "next/navigation";
@@ -148,9 +148,11 @@ const Table = ({ page, data }) => {
     };
 
   const router = useRouter();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const handleStartAssessment = async (e) => {
     e.preventDefault();
+    setIsButtonDisabled(true);
     const modal = document.getElementById("start-assessment-modal");
     const assessmentID = modal.dataset.id;
 
@@ -177,6 +179,7 @@ const Table = ({ page, data }) => {
       });
     } else {
       alert("Please see researcher for further instructions.");
+      setIsButtonDisabled(false);
       return;
     }
 
@@ -244,7 +247,12 @@ const Table = ({ page, data }) => {
                     <input type="text" id="lastName" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
                     <input type="text" id="email" placeholder="Email" className="input input-bordered w-full text-md my-1" required />
                     <div className="flex justify-center mt-4">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Start Assessment</button>
+                        {isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                            <div className='flex justify-center'><span className="text-white-900 loading loading-spinner loading-md"></span></div>
+                          </button>}
+                        {!isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                            Start Assessment
+                          </button>}
                     </div>
                 </form>
             </Modal>
