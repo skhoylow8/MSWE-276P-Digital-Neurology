@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from models.participant import Participant
 
+
 participant_router = APIRouter()
 
 
@@ -25,4 +26,18 @@ async def create_participant(request: Request, participant: Participant = Body(.
       new_participant = await request.app.mongodb["Participant"].replace_one({"email": participant.email}, jsonable_encoder(participant))
       created_participant = await request.app.mongodb["Participant"].find_one({"email": participant.email})
       return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_participant)
+        
+    
+@participant_router.get("/", response_description="Get all Participants and their Assessment names")
+async def list_participants(request: Request):
+    participants = []
+    participant_list = await request.app.mongodb["Participant"].find().to_list(length=None)
+    for participant in participant_list:
+      assessment_names=[]
+      for assessment in participant.get('assessment_ids') :
+         if(await request.app.mongodb["Assessment"].find_one({"_id": assessment})) is not None:
+            assessment_names.append(await request.app.mongodb["Assessment"].find_one({"_id": assessment}))
+      participant["assessment_ids"] = assessment_names   
+      participants.append(participant)
+    return participants
   

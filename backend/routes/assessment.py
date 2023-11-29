@@ -59,6 +59,7 @@ async def list_assessments(request: Request, user: Annotated[Future, Depends(get
     for assessment in await request.app.mongodb["Assessment"].find(find_criteria).sort(sort_criteria).to_list(10):
         assessments.append(assessment)
     return assessments
+    
 
 
 @assessment_router.get("/{id}", response_description="Get an assessment")
@@ -74,3 +75,5 @@ async def get_assessment(id: str, request: Request, user: Annotated[Future, Depe
         return assessment
 
     return HTTPException(status_code=404, detail=f"Assessment {id} not found")
+
+        
