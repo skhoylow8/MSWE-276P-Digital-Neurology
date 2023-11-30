@@ -1,36 +1,55 @@
-import pandas
+import csv
+
+from models.response import AssessmentResponse, AnsweredQuestion
 
 
-def mongo_docs_to_csv(mongo_docs):
-    # restrict the number of docs to export
+def create_csv_file(assessment_responses: [AssessmentResponse]):
+    # TODO do we have to export for a specific duration
+    print("total docs:", len(assessment_responses))
+    if len(assessment_responses) == 0:
+        print("no assessments!")
+        return
 
-    #TODO do we have to export for a specific duration
-    mongo_docs = mongo_docs[:50]  # slice the list
-    print("total docs:", len(mongo_docs))
+    # get questions using one assessment response, all assessment responses will have same questions
+    questions = list()
+    rows = list()
 
-    # create an empty DataFrame for storing documents
-    docs = pandas.DataFrame(mongo_docs)
+    for assessment_response in assessment_responses:
+        _id = assessment_response.get('_id')
+        created_on = assessment_response.get('created_on')
+        assessment_id = assessment_response.get('assessment_id')
+        patient_id = assessment_response.get('patient_id')
+        answered_questions = sorted(
+            assessment_response.get('data'),
+            key=lambda answered_question: answered_question.get('question_id')
+        )
+        if len(questions) == 0:
+            questions = get_questions(answered_questions)
+        question_answers = dict()
+        for ans in answered_questions:
+            question_answers[ans.get('question_text')] = ans.get('answer')
 
-    # iterate over the list of MongoDB dict documents
-    for num, doc in enumerate(mongo_docs):
+        row = {
+            "id": _id,
+            "created_on": created_on,
+            "assessment_id": assessment_id,
+            "patient_id": patient_id,
+            **question_answers
+        }
+        rows.append(row)
 
-        # convert ObjectId() to str
-        doc["_id"] = str(doc["_id"])
-        print(doc['_id'])
+    # TODO  what to name the file
+    headers = ["id", "created_on", "assessment_id", "patient_id"] + questions
+    filename = "assessments.csv"
+    with open(filename, "w") as file:
+        csv_writer = csv.DictWriter(file, fieldnames=headers)
+        csv_writer.writeheader()
+        csv_writer.writerows(rows)
 
-        # get document _id from dict
-        doc_id = doc["_id"]
-        print(doc_id)
 
-        # create a Series obj from the MongoDB dict
-        series_obj = pandas.Series(doc, name=doc_id)
-        print(series_obj)
-
-        # append the MongoDB Series obj to the DataFrame obj
-        # docs = docs.append(series_obj)
-        pandas.concat([docs, series_obj])
-        print(docs)
-
-    # export MongoDB documents to a CSV file
-    #TODO do we have to export for a specific duration what to name the file
-    docs.to_csv("responses.csv", ",")  # CSV delimited by commas
+def get_questions(answered_questions: [AnsweredQuestion]) -> []:
+    questions = list()
+    for i in answered_questions:
+        questions.append(i.get('question_text'))
+    print(questions)
+    return questions
