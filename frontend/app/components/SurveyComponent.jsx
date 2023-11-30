@@ -34,18 +34,31 @@ function SurveyComponent({ data, assessmentID, patientID }) {
         const formattedResults = formatSurveyResults(surveryResults);
 
         // send formatted survey results
-        // options.showSaveError();
         const currentDate = new Date();
-        const dataToSend = {
-            assessment_id: assessmentID,
-            patient_id: patientID,
-            data: formattedResults,
-            completed_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
-        }
 
-        console.log(JSON.stringify(dataToSend))
-
-        options.showSaveSuccess();
+        fetch('http://localhost:8000/response', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                assessment_id: assessmentID,
+                patient_id: patientID,
+                data: formattedResults,
+                created_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    const errorData = response.json();
+                    throw new Error(errorData.detail);
+                }
+                options.showSaveSuccess();
+            })
+            .catch(error => {
+                console.log(error)
+                options.showSaveError();
+            });
     });
 
     const formatSurveyResults = (res) => {
@@ -53,11 +66,12 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
         Object.keys(res).map((key) => {
             const ids = key.split("_");
+            const answer = typeof res[key] === 'string' ? res[key] : res[key].join();
 
             results.push({
                 survey_id: ids[0],
                 question_id: ids[1],
-                answer: res[key],
+                answer: answer,
             })
         });
 
@@ -102,38 +116,5 @@ function SurveyComponent({ data, assessmentID, patientID }) {
         </div>
     );
 }
-
-// const root = ReactDOM.createRoot(document.getElementById("surveyElement"));
-// root.render(<SurveyComponent />);
-
-// function SurveyComponent({ data }) {
-//     const survey = new Model(data);
-
-//     // survey.onComplete.add((sender, options) => {
-//     //     console.log(JSON.stringify(sender.data, null, 3));
-//     //     console.log(survey.data)
-//     // });
-//     survey.onComplete.add((survey) => {
-//         const resultData = [];
-//         for (const key in survey.data) {
-//           const question = survey.getQuestionByName(key);
-//           if (!!question) {
-//             const item = {
-//               name: key,
-//               value: question.value,
-//               title: question.displayValue,
-//               displayValue: question.displayValue
-//             };
-//             resultData.push(item);
-//           }
-//         }
-//         // ...
-//         // Send `resultData` to your web server
-//         // ...
-//         console.log(resultData)
-//     });
-
-//     return (<Survey model={survey} />);
-// }
 
 export default SurveyComponent;
