@@ -11,3 +11,4 @@ PyMuPDF==1.23.5
 email-validator==2.1.0.post1
 requests
 python-dotenv
+pandas==2.1.2
