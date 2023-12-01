@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from 'swr'; 
 import SurveyComponent from "@/app/components/SurveyComponent";
 import isAuth from '@/app/components/isAuth';
+import Cookies from 'universal-cookie';
 
 const fetcher = async (url) => {
     // get survey questions using id
@@ -63,7 +64,7 @@ const formatQuestions = (data) => {
 
 const StartAssessment = () => {
     const searchParams = useSearchParams();
-    const router = useRouter();
+    const cookies = new Cookies();
 
     const ids = searchParams.get('data').split("_");
     const assessmentID = ids[0];
@@ -72,29 +73,8 @@ const StartAssessment = () => {
     const { data, error, isLoading } = useSWR(`http://localhost:8000/assessment/${assessmentID}`, fetcher)
 
     useEffect(() => {
-        const handleBackButton = (event) => {
-          // You can add additional conditions if needed
-          // For example, only redirect if the user is on a specific page
-          if (router.pathname !== '/assessments/start') {
-            // Log user out if they press back button
-            window.localStorage.setItem("token", null);
-            window.localStorage.setItem("authenticated", false);
-            window.localStorage.setItem("researcherID", null);
-            window.localStorage.setItem("firstName", null);
-            window.localStorage.setItem("email", null);
-
-            router.push('/');
-          }
-        };
-    
-        // Listen for the 'popstate' event
-        window.addEventListener('popstate', handleBackButton);
-    
-        // Cleanup the event listener when the component is unmounted
-        return () => {
-          window.removeEventListener('popstate', handleBackButton);
-        };
-    }, [router]);
+        cookies.set("authenticated", false, { path: '/' });
+    }, []);
 
     if (error) {
         console.error('Error fetching data:', error);

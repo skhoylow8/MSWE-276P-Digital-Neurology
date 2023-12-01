@@ -155,6 +155,7 @@ const Table = ({ page, data }) => {
     e.preventDefault();
     const modal = document.getElementById("start-assessment-modal");
     const assessmentID = modal.dataset.id;
+    const cookies = new Cookies();
 
     const consentRes = e.target.elements.consentQ.value;
     const firstName = e.target.elements.firstName.value;
@@ -182,6 +183,7 @@ const Table = ({ page, data }) => {
       return;
     }
 
+    // redirect to start assessment page
     router.push(
       `/assessments/start?data=${encodeURIComponent(
         assessmentID + "_" + patientID

@@ -1,15 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import "survey-core/defaultV2.min.css";
 import theme from "../../public/utils/survey_theme.json";
+import Cookies from "universal-cookie";
+import { redirect } from "next/navigation";
 
 function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
+    const [redirectUrl, setRedirectUrl] = useState(null);
+
     let savedData = false;
+
+    // Simulate a delayed redirect
+    useEffect(() => {
+        if (redirectUrl) {
+            const timer = setTimeout(() => {
+                console.log('Redirecting...');
+                window.location.href = redirectUrl;
+            }, 10000); // 10 seconds
+
+            return () => clearTimeout(timer); // Cleanup timer on component unmount
+        }
+    }, [redirectUrl]);
 
     survey.applyTheme(theme);
 
@@ -21,7 +37,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
     survey.onComplete.add(() => { setIsRunning(false); });
 
-    survey.onComplete.add((sender, options) => {
+    survey.onComplete.add(async (sender, options) => {
         options.showSaveInProgress();
 
         let surveryResults = sender.data;
@@ -50,6 +66,33 @@ function SurveyComponent({ data, assessmentID, patientID }) {
         }
 
         options.showSaveSuccess();
+
+        try {
+            // Call logout endpoint and clear cookies
+            const res = await fetch("http://localhost:8000/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            const cookies = new Cookies();
+    
+            if (res.status === 200) {
+                // Successful logout
+                cookies.set("authenticated", false, { path: '/' });
+                cookies.set("researcherID", null, { path: '/' });
+                cookies.set("firstName", null, { path: '/' });
+                cookies.set("email", null, { path: '/' });
+                
+                console.log("Logout successful. Redirecting...");
+            } else {
+                // Failed logout
+                throw new Error("Failed to logout");
+            }
+        } catch (err) {
+            console.error(err);
+        }
     });
 
     const formatSurveyResults = (res) => {
@@ -101,6 +144,10 @@ function SurveyComponent({ data, assessmentID, patientID }) {
             <Survey
                 currentPageNo={pageNo}
                 model={survey}
+                navigateToUrl={"http://localhost:8000/app"}
+                onNavigateToUrl={function (sender, options) {
+                    setRedirectUrl(options.url);
+                }}
             />
             {renderExternalNavigation()}
         </div>

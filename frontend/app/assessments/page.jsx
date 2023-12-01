@@ -31,47 +31,6 @@ const Assessments = () => {
   const [surveyData, setSurveyData] = useState([]);
   const [surveysSelected, setSurveysSelected] = useState([]);
 
-  const date = new Date();
-
-  const assessmentData = [
-    {
-      id: "1",
-      name: "Assessment 1",
-      description: "This is a description about Assessment 1.",
-      createdOn: date,
-      consentText:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    },
-    {
-      id: "2",
-      name: "Assessment 2",
-      description: "This is a description about Assessment 2.",
-      createdOn: date,
-      consentText: "This is a consent form.........",
-    },
-    {
-      id: "3",
-      name: "Assessment 1",
-      description: "This is a description about Assessment 1.",
-      createdOn: date,
-      consentText: "This is a consent form.........",
-    },
-    {
-      id: "4",
-      name: "Assessment 1",
-      description: "This is a description about Assessment 1.",
-      createdOn: date,
-      consentText: "This is a consent form.........",
-    },
-    {
-      id: "5",
-      name: "Assessment 2",
-      description: "This is a description about Assessment 2.",
-      createdOn: date,
-      consentText: "This is a consent form.........",
-    },
-  ];
-
   const handleCreateAssessment = async (e) => {
     const surveyIDS = surveysSelected.map((survey) => survey.value);
     const fileInput = document.getElementById("consentForm");

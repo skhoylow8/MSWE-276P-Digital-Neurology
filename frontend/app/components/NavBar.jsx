@@ -1,19 +1,39 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
 
 const NavBar = (props) => {
     const router = useRouter();
     const cookies = new Cookies();
 
-    const handleLogout = (e) =>{
-        cookies.set("authenticated", false, { path: '/' });
-        cookies.set("researcherID", null, { path: '/' });
-        cookies.set("firstName", null, { path: '/' });
-        cookies.set("email", null, { path: '/' });
-        router.push('/')
+    const handleLogout = async (e) =>{
+        e.preventDefault();
+        try {
+            // Call logout endpoint and clear cookies
+            const res = await fetch("http://localhost:8000/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        
+            if (res.status === 200) {
+                // Successful logout
+                cookies.set("authenticated", false, { path: '/' });
+                cookies.set("researcherID", null, { path: '/' });
+                cookies.set("firstName", null, { path: '/' });
+                cookies.set("email", null, { path: '/' });
+                
+                router.push("/"); 
+            } else {
+                // Failed logout
+                throw new Error("Failed to logout");
+            }
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     return (

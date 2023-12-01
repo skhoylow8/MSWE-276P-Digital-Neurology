@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import Cookies from "universal-cookie";
-import Script from "next/script";
 
 export default function isAuth(Component) {
   return function IsAuth(props) {
