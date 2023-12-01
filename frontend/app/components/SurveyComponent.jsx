@@ -9,6 +9,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
+    let savedData = false;
 
     survey.applyTheme(theme);
 
@@ -43,7 +44,10 @@ function SurveyComponent({ data, assessmentID, patientID }) {
             completed_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
         }
 
-        console.log(JSON.stringify(dataToSend))
+        if(!savedData){ // TODO: check to make sure only executing once
+            console.log(JSON.stringify(dataToSend))
+            savedData = true;
+        }
 
         options.showSaveSuccess();
     });

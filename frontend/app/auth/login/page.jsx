@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Cookies from "universal-cookie";
 
 export const Login = (props) => {
   const router = useRouter();
@@ -29,6 +30,7 @@ export const Login = (props) => {
 
       const email = e.target.elements.email.value;
       const password = e.target.elements.password.value;
+      const cookies = new Cookies();
 
       if(!(validEmail(email) && validPassword(password))){
           alert("The email or password entered is invalid. Please make sure they contain lowercase letters, digits, or one of these special characters['_', '-', '.'] as well as between 1 and 127 characters.");
@@ -62,10 +64,10 @@ export const Login = (props) => {
             const firstName = result.researcher_name
             const email = result.researcher_email
 
-            window.localStorage.setItem("authenticated", true);
-            window.localStorage.setItem("researcherID", researcherID);
-            window.localStorage.setItem("firstName", firstName);
-            window.localStorage.setItem("email", email);
+            cookies.set("authenticated", true, { path: "/" });
+            cookies.set("researcherID", researcherID, { path: "/" });
+            cookies.set("firstName", firstName, { path: "/" });
+            cookies.set("email", email, { path: "/" });
 
             router.push('/dashboard')
           } else {

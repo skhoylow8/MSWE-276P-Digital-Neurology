@@ -7,13 +7,13 @@ import MultipleChoice from '@/app/components/questionTypes/MultipleChoice';
 import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
+import isAuth from '@/app/components/isAuth';
 
 const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
@@ -79,4 +79,4 @@ const ViewSurvey = () => {
     )
 }
 
-export default ViewSurvey
+export default isAuth(ViewSurvey);

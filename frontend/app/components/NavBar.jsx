@@ -2,15 +2,17 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Cookies from 'universal-cookie';
 
 const NavBar = (props) => {
     const router = useRouter();
+    const cookies = new Cookies();
 
     const handleLogout = (e) =>{
-        window.localStorage.setItem("authenticated", false);
-        window.localStorage.setItem("researcherID", null);
-        window.localStorage.setItem("firstName", null);
-        window.localStorage.setItem("email", null);
+        cookies.set("authenticated", false, { path: '/' });
+        cookies.set("researcherID", null, { path: '/' });
+        cookies.set("firstName", null, { path: '/' });
+        cookies.set("email", null, { path: '/' });
         router.push('/')
     }
 

@@ -5,13 +5,14 @@ import NavBar from "../components/NavBar";
 import Modal from "../components/Modal";
 import { MultiSelect } from "react-multi-select-component";
 import useSWR from "swr";
+import Cookies from "universal-cookie";
+import isAuth from '@/app/components/isAuth';
 
 const fetcher = async (url) => {
   const response = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${window.localStorage.getItem("token")}`,
     },
   });
 
@@ -71,21 +72,16 @@ const Assessments = () => {
     },
   ];
 
-  useEffect(() => {
-    if (!window.localStorage.getItem("authenticated")) {
-      router.push("/");
-    }
-  }, []);
-
   const handleCreateAssessment = async (e) => {
     const surveyIDS = surveysSelected.map((survey) => survey.value);
     const fileInput = document.getElementById("consentForm");
     const file = fileInput.files[0];
+    const cookies = new Cookies();
 
     const assessmentName = e.target.elements.assessmentName.value;
     const assessmentDescription = e.target.elements.assessmentDesc.value;
     const consentText = e.target.elements.consentFormText.value;
-    const researcherID = window.localStorage.getItem("researcherID");
+    const researcherID = cookies.get("researcherID");
     const formData = new FormData();
     let url;
 
@@ -118,7 +114,6 @@ const Assessments = () => {
         const response = await fetch(url, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             Accept: "application/json",
           },
           body: formData,
@@ -139,7 +134,6 @@ const Assessments = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
       },
     });
 
@@ -260,4 +254,4 @@ const Assessments = () => {
     </div>
   );
 };
-export default Assessments;
+export default isAuth(Assessments);

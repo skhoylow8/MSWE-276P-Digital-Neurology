@@ -2,7 +2,8 @@
 import React, { useEffect } from 'react';
 import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from 'swr'; 
-import SurveyComponent from "../../components/SurveyComponent";
+import SurveyComponent from "@/app/components/SurveyComponent";
+import isAuth from '@/app/components/isAuth';
 
 const fetcher = async (url) => {
     // get survey questions using id
@@ -10,7 +11,6 @@ const fetcher = async (url) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
@@ -33,7 +33,7 @@ const formatQuestions = (data) => {
         "sc": "rating", // should be "rating" but need a min/max val, // includes scale/rating
         "fr": "comment", // includes free response
         "cb": "checkbox", // includes multiple answers
-        "yn": "boolean", // includes yes/no 
+        "yn": "radiogroup", // includes yes/no 
     }
 
     data.surveys.map((survey) => {
@@ -109,4 +109,4 @@ const StartAssessment = () => {
     )
 }
 
-export default StartAssessment
+export default isAuth(StartAssessment);

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Cookies from "universal-cookie";
 
 export const Register = (props) => {
   const router = useRouter();
@@ -63,10 +64,11 @@ export const Register = (props) => {
         const firstNameRes = result.researcher_name
         const emailRes = result.researcher_email
 
-        window.localStorage.setItem("authenticated", true);
-        window.localStorage.setItem("researcherID", researcherID);
-        window.localStorage.setItem("firstName", firstNameRes);
-        window.localStorage.setItem("email", emailRes);
+        const cookies = new Cookies();
+        cookies.set("authenticated", true, { path: "/" });
+        cookies.set("researcherID", researcherID, { path: "/" });
+        cookies.set("firstName", firstNameRes, { path: "/" });
+        cookies.set("email", ememailResail, { path: "/" });
 
         router.push('/dashboard')
 

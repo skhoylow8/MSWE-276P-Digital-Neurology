@@ -7,6 +7,8 @@ import MultipleChoice from '@/app/components/questionTypes/MultipleChoice';
 import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
+import isAuth from '@/app/components/isAuth';
+import Cookies from 'universal-cookie';
 
 const CreateSurvey = () => {
     const searchParams = useSearchParams();
@@ -59,18 +61,18 @@ const CreateSurvey = () => {
             "desc": surveyDesc,
             "questions": questions,
         }))
+        const cookies = new Cookies();
         // make post reuqest to create survey
         const response = await fetch('http://localhost:8000/survey', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
             },
             body: JSON.stringify({
                 "name": surveyName,
                 "desc": surveyDesc,
                 "questions": questions,
-                "researcherId": window.localStorage.getItem('researcherID'),
+                "researcherId": cookies.get('researcherID'),
             }),
         });
 
@@ -185,4 +187,4 @@ const CreateSurvey = () => {
     )
 }
 
-export default CreateSurvey
+export default isAuth(CreateSurvey);

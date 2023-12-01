@@ -8,14 +8,15 @@ import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
 import Modal from '@/app/components/Modal';
+import isAuth from '@/app/components/isAuth';
 import EditableLabel from 'react-inline-editing';
+import Cookies from 'universal-cookie';
 
 const fetcher = async (url) => {
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
 		},
 	});
 
@@ -82,18 +83,18 @@ const DuplicateSurvey = () => {
 	}
 
 	const handleDuplicateSurvey = async () => {
+		const cookies = new Cookies();
 		// make post reuqest to create a new survey
 		const response = await fetch(`http://localhost:8000/survey`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
 			},
 			body: JSON.stringify({
 				"name": surveyName,
 				"desc": surveyDesc,
 				"questions": questions,
-				"researcherId": window.localStorage.getItem('researcherID'),
+				"researcherId": cookies.get('researcherID'),
 			}),
 		});
 
@@ -228,4 +229,4 @@ const DuplicateSurvey = () => {
 	)
 }
 
-export default DuplicateSurvey
+export default isAuth(DuplicateSurvey);

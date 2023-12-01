@@ -1,7 +1,9 @@
 'use client';
 import React, { useEffect} from 'react'
-import Table from '../components/Table';
-import NavBar from '../components/NavBar';
+import Table from '@/app/components/Table';
+import NavBar from '@/app/components/NavBar';
+import isAuth from '@/app/components/isAuth';
+
 
 const Participant = (props) => {
     const date = new Date(); 
@@ -13,12 +15,6 @@ const Participant = (props) => {
         { participantID: '4', assessmentName: 'Assessment 1', status: 'completed', completedOn: date },
         { participantID: '5', assessmentName: 'Assessment 2', status: 'incompleted', completedOn: date },
     ]
-
-    useEffect(() => { 
-        if(!window.localStorage.getItem("authenticated")){
-            router.push('/')
-        }
-     }, []);
 
     return (
         <div className="min-h-full bg-gray-50">
@@ -41,4 +37,4 @@ const Participant = (props) => {
     )
 }
 
-export default Participant;
+export default isAuth(Participant);
