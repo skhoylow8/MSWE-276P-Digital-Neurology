@@ -11,21 +11,8 @@ function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
-    const [redirectUrl, setRedirectUrl] = useState(null);
 
     let savedData = false;
-
-    // Simulate a delayed redirect
-    useEffect(() => {
-        if (redirectUrl) {
-            const timer = setTimeout(() => {
-                console.log('Redirecting...');
-                window.location.href = redirectUrl;
-            }, 10000); // 10 seconds
-
-            return () => clearTimeout(timer); // Cleanup timer on component unmount
-        }
-    }, [redirectUrl]);
 
     survey.applyTheme(theme);
 
@@ -146,7 +133,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
                 model={survey}
                 navigateToUrl={"http://localhost:8000/app"}
                 onNavigateToUrl={function (sender, options) {
-                    setRedirectUrl(options.url);
+                    window.location.href = options.url;
                 }}
             />
             {renderExternalNavigation()}
