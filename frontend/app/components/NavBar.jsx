@@ -25,7 +25,7 @@ const NavBar = (props) => {
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">
                                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                                <Link href="/dashboard" className={props.page=="dashboard"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"} aria-current="page">Dashboard</Link>
+                                {/* <Link href="/dashboard" className={props.page=="dashboard"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"} aria-current="page">Dashboard</Link> */}
                                 <Link href="/assessments" className={props.page=="assessments"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Assessments</Link>
                                 <Link href="/participants" className={props.page=="participants"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Participants</Link>
                                 <Link href="/surveys" className={props.page=="surveys"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Surveys</Link>
@@ -73,15 +73,15 @@ const NavBar = (props) => {
                         <ul id="mobile-menu" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                                <Link href="/dashboard" className={props.page=="dashboard" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"} aria-current="page">Dashboard</Link>
+                                {/* <Link href="/dashboard" className={props.page=="dashboard" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"} aria-current="page">Dashboard</Link> */}
                                 <Link href="/assessments" className={props.page=="assessments" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Assessments</Link>
                                 <Link href="/participants" className={props.page=="participants" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Participants</Link>
-                                <Link href="/participants" className={props.page=="surveys" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Surveys</Link>
+                                <Link href="/surveys" className={props.page=="surveys" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Surveys</Link>
                             </div>
                             <div className="border-t border-gray-700 pb-3 pt-4">
                                 <div className="flex flex-col px-5">
-                                    <div className="text-base font-medium leading-none text-gray-400 py-1">Tom Cook</div>
-                                    <div className="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
+                                    <div className="text-base font-medium leading-none text-gray-400 py-1">{window.localStorage.getItem("firstName")}</div>
+                                    <div className="text-sm font-medium leading-none text-gray-400">{window.localStorage.getItem("email")}</div>
                                 </div>
                                 <div className="mt-3 space-y-1 px-2">
                                     <a href="#" onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-700 hover:text-white">Sign out</a>
