@@ -158,7 +158,6 @@ const Table = ({ page, data }) => {
     const firstName = e.target.elements.firstName.value;
     const lastName = e.target.elements.lastName.value;
     const email = e.target.elements.email.value;
-    const patientID = e.target.elements.patientID.value;
 
     // save patient data if they consent
     if (consentRes == "yes") {
@@ -168,23 +167,31 @@ const Table = ({ page, data }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          _id: patientID,
+          // _id: patientID,
           first_name: firstName,
           last_name: lastName,
           email: email,
           assessment_ids: [assessmentID],
         }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const responseData = await response.json();
+      const patientID = responseData._id;
+
+      router.push(
+        `/assessments/start?data=${encodeURIComponent(
+          assessmentID + "_" + patientID
+        )}`
+      );
+
     } else {
       alert("Please see researcher for further instructions.");
       return;
     }
-
-    router.push(
-      `/assessments/start?data=${encodeURIComponent(
-        assessmentID + "_" + patientID
-      )}`
-    );
   };
 
     return (
@@ -239,7 +246,7 @@ const Table = ({ page, data }) => {
                         </RadioGroup>
                     </FormField>
                     <textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled></textarea>
-                    <input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required />
+                    {/* <input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required /> */}
                     <input type="text" id="firstName" placeholder="First Name" className="input input-bordered w-full text-md my-1" required />
                     <input type="text" id="lastName" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
                     <input type="text" id="email" placeholder="Email" className="input input-bordered w-full text-md my-1" required />
