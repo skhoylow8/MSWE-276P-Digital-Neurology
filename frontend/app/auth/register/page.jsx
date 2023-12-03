@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export const Register = (props) => {
   const router = useRouter();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const validName = (string) => {
     return /^[A-Za-z]+$/.test(string); 
@@ -20,6 +21,7 @@ export const Register = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsButtonDisabled(true);
 
     const firstName = e.target.elements.firstName.value;
     const lastName = e.target.elements.lastName.value;
@@ -50,7 +52,6 @@ export const Register = (props) => {
             }),
         });
 
-        console.log(response)
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.detail);
@@ -58,7 +59,6 @@ export const Register = (props) => {
 
         const result = await response.json();
         
-        const accessToken = result.access_token;
         const researcherID = result.researcher_id
         const firstNameRes = result.researcher_name
         const emailRes = result.researcher_email
@@ -68,13 +68,15 @@ export const Register = (props) => {
         window.localStorage.setItem("firstName", firstNameRes);
         window.localStorage.setItem("email", emailRes);
 
-        router.push('/dashboard')
+        router.push('/assessments')
 
       } catch (error) {
         alert(error.message)
+        setIsButtonDisabled(false);
       }
     } else {
         alert("Something went wrong with the information entered. Please try again.");
+        setIsButtonDisabled(false);
     }
   };
 
@@ -133,17 +135,20 @@ export const Register = (props) => {
               </div>
             </div>
             <div className="flex justify-center">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
-                Sign Up
-              </button>
+                {isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                    <div className='flex justify-center'><span className="text-white-900 loading loading-spinner loading-md"></span></div>
+                  </button>}
+                {!isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                    Sign Up
+                  </button>}
             </div>
             <div className="flex items-center justify-between my-3">
               <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/login">
                 Have An Account?
               </Link>
-              <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
+              {/* <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
                 Forgot Password?
-              </Link>
+              </Link> */}
             </div>
           </form>
         </div>
