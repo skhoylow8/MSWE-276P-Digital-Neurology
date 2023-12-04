@@ -61,7 +61,6 @@ export const Login = (props) => {
           if (response.ok) {
             const result = await response.json();
 
-            const accessToken = result.access_token;
             const researcherID = result.researcher_id
             const firstName = result.researcher_name
             const email = result.researcher_email
@@ -105,9 +104,12 @@ export const Login = (props) => {
                         {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}
                     </div>
                     <div className="flex justify-center">
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
-                        Log In
-                        </button>
+                        {isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                            <div className='flex justify-center'><span className="text-white-900 loading loading-spinner loading-md"></span></div>
+                        </button>}
+                        {!isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                            Log In
+                        </button>}
                     </div>
                     <div className="flex items-center justify-between my-3">
                         <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/register">

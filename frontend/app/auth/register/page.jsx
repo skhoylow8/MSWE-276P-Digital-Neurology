@@ -68,7 +68,7 @@ export const Register = (props) => {
         cookies.set("authenticated", true, { path: "/" });
         cookies.set("researcherID", researcherID, { path: "/" });
         cookies.set("firstName", firstNameRes, { path: "/" });
-        cookies.set("email", ememailResail, { path: "/" });
+        cookies.set("email", emailRes, { path: "/" });
 
         router.push('/assessments')
 

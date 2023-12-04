@@ -5,14 +5,13 @@ import { Survey } from "survey-react-ui";
 import "survey-core/defaultV2.min.css";
 import theme from "../../public/utils/survey_theme.json";
 import Cookies from "universal-cookie";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
-
-    let savedData = false;
+    const router = useRouter();
 
     survey.applyTheme(theme);
 
@@ -24,10 +23,36 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
     survey.onComplete.add(() => { setIsRunning(false); });
 
-    survey.onComplete.add(async (sender, options) => {
-        options.showSaveInProgress();
+    const formatSurveyResults = (res) => {
+        let results = []
 
-        let surveryResults = sender.data;
+        Object.keys(res).map((key) => {
+            const ids = key.split("_");
+            let answer;
+
+            if(typeof res[key] === 'string'){
+                answer = res[key]
+            } else if(typeof res[key] === 'number'){
+                answer = res[key].toString();
+            } else {
+                answer = res[key].join();
+            }
+
+            results.push({
+                survey_id: ids[0],
+                question_id: ids[1],
+                answer: answer,
+            })
+        });
+
+        return results;
+    }
+
+    const prevPage = () => { survey.prevPage(); };
+    const nextPage = () => { survey.nextPage(); };
+    const endSurvey = async () => { 
+        let surveryResults = survey.data;
+        const cookies = new Cookies();
 
         survey.getAllQuestions().map((question) => {
             if(!surveryResults[question.name]){
@@ -37,70 +62,35 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
         const formattedResults = formatSurveyResults(surveryResults);
 
-        // send formatted survey results
-        // options.showSaveError();
-        const currentDate = new Date();
-        const dataToSend = {
-            assessment_id: assessmentID,
-            patient_id: patientID,
-            data: formattedResults,
-            completed_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
-        }
-
-        if(!savedData){ // TODO: check to make sure only executing once
-            console.log(JSON.stringify(dataToSend))
-            savedData = true;
-        }
-
-        options.showSaveSuccess();
-
         try {
-            // Call logout endpoint and clear cookies
-            const res = await fetch("http://localhost:8000/logout", {
-                method: "POST",
+            const response = await fetch('http://localhost:8000/response', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({
+                    assessment_id: assessmentID,
+                    patient_id: patientID,
+                    data: formattedResults,
+                }),
             });
     
-            const cookies = new Cookies();
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail);
+            } 
     
-            if (res.status === 200) {
-                // Successful logout
-                cookies.set("authenticated", false, { path: '/' });
-                cookies.set("researcherID", null, { path: '/' });
-                cookies.set("firstName", null, { path: '/' });
-                cookies.set("email", null, { path: '/' });
-                
-                console.log("Logout successful. Redirecting...");
-            } else {
-                // Failed logout
-                throw new Error("Failed to logout");
-            }
-        } catch (err) {
-            console.error(err);
+            // Successful logout
+            cookies.set("authenticated", false, { path: '/' });
+            cookies.set("researcherID", null, { path: '/' });
+            cookies.set("firstName", null, { path: '/' });
+            cookies.set("email", null, { path: '/' });
+
+            router.push("/");
+        } catch (error) {
+            console.error(error.message)
         }
-    });
-
-    const formatSurveyResults = (res) => {
-        let results = []
-
-        Object.keys(res).map((key) => {
-            const ids = key.split("_");
-
-            results.push({
-                survey_id: ids[0],
-                question_id: ids[1],
-                answer: res[key],
-            })
-        });
-
-        return results;
-    }
-
-    const prevPage = () => { survey.prevPage(); };
-    const nextPage = () => { survey.nextPage(); };
-    const endSurvey = () => { survey.completeLastPage(); };   
+     };   
 
     const renderButton = (text, func, canRender) => {
         if (!canRender) return undefined;
