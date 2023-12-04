@@ -20,10 +20,35 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
     survey.onComplete.add(() => { setIsRunning(false); });
 
-    survey.onComplete.add((sender, options) => {
-        options.showSaveInProgress();
+    const formatSurveyResults = (res) => {
+        let results = []
 
-        let surveryResults = sender.data;
+        Object.keys(res).map((key) => {
+            const ids = key.split("_");
+            let answer;
+
+            if(typeof res[key] === 'string'){
+                answer = res[key]
+            } else if(typeof res[key] === 'number'){
+                answer = res[key].toString();
+            } else {
+                answer = res[key].join();
+            }
+
+            results.push({
+                survey_id: ids[0],
+                question_id: ids[1],
+                answer: answer,
+            })
+        });
+
+        return results;
+    }
+
+    const prevPage = () => { survey.prevPage(); };
+    const nextPage = () => { survey.nextPage(); };
+    const endSurvey = async () => { 
+        let surveryResults = survey.data;
 
         survey.getAllQuestions().map((question) => {
             if(!surveryResults[question.name]){
@@ -33,40 +58,29 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
         const formattedResults = formatSurveyResults(surveryResults);
 
-        // send formatted survey results
-        // options.showSaveError();
-        const currentDate = new Date();
-        const dataToSend = {
-            assessment_id: assessmentID,
-            patient_id: patientID,
-            data: formattedResults,
-            completed_on: currentDate.toISOString().slice(0, -1)//  + (currentDate.getMilliseconds() / 1000).toFixed(6).slice(1),
+        try {
+            const response = await fetch('http://localhost:8000/response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    assessment_id: assessmentID,
+                    patient_id: patientID,
+                    data: formattedResults,
+                }),
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail);
+            } 
+    
+            const result = await response.json();
+        } catch (error) {
+            console.error(error.message)
         }
-
-        console.log(JSON.stringify(dataToSend))
-
-        options.showSaveSuccess();
-    });
-
-    const formatSurveyResults = (res) => {
-        let results = []
-
-        Object.keys(res).map((key) => {
-            const ids = key.split("_");
-
-            results.push({
-                survey_id: ids[0],
-                question_id: ids[1],
-                answer: res[key],
-            })
-        });
-
-        return results;
-    }
-
-    const prevPage = () => { survey.prevPage(); };
-    const nextPage = () => { survey.nextPage(); };
-    const endSurvey = () => { survey.completeLastPage(); };   
+     };   
 
     const renderButton = (text, func, canRender) => {
         if (!canRender) return undefined;

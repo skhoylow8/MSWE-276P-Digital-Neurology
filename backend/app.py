@@ -8,6 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from routes.assessment import assessment_router
 from routes.auth import auth_router
 from routes.participant import participant_router
+from routes.response import response_router
 from routes.survey import survey_router
 from settings import settings
 from fastapi.responses import FileResponse
@@ -38,6 +39,7 @@ app.include_router(survey_router, tags=["surveys"], prefix="/survey")
 app.include_router(participant_router, tags=["participant"], prefix="/participant")
 app.include_router(auth_router, tags=["auth"], prefix="")
 app.include_router(assessment_router, tags=["assessments"], prefix="/assessment")
+app.include_router(response_router, tags=["responses"], prefix="/response")
 
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, StreamingResponse
