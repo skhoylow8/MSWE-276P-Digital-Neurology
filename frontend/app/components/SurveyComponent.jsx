@@ -92,7 +92,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
                 <div className="flex gap-8">
                     {/* {renderButton('Previous Page', prevPage, pageNo !== 0)} */}
                     {renderButton('Next / Skip', nextPage, pageNo !== survey.visiblePages.length - 1)}
-                    {renderButton('Complete', endSurvey, pageNo <= survey.visiblePages.length - 1)}
+                    {renderButton('Complete', endSurvey, pageNo == survey.visiblePages.length - 1)}
                 </div>
             </div>
         );

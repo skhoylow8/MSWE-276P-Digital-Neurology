@@ -1,10 +1,11 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export const Login = (props) => {
   const router = useRouter();
+  const [isButtonDisabled , setIsButtonDisabled] = useState(false);
 
   const validPassword = (string) => {
       return /^[\w\-.]{1,127}$/.test(string);
@@ -26,6 +27,7 @@ export const Login = (props) => {
 
   const handleSubmit = async (e) => {
       e.preventDefault();
+      setIsButtonDisabled(true);
 
       const email = e.target.elements.email.value;
       const password = e.target.elements.password.value;
@@ -67,7 +69,7 @@ export const Login = (props) => {
             window.localStorage.setItem("firstName", firstName);
             window.localStorage.setItem("email", email);
 
-            router.push('/dashboard')
+            router.push('/assessments')
           } else {
               console.error('Failed to make POST request');
           }
@@ -105,17 +107,20 @@ export const Login = (props) => {
                   {/* <p className="text-red-500 text-xs italic">Please choose a password.</p> */}
               </div>
               <div className="flex justify-center">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
-                  Log In
-                  </button>
+                {isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                    <div className='flex justify-center'><span className="text-white-900 loading loading-spinner loading-md"></span></div>
+                  </button>}
+                {!isButtonDisabled && <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                    Log In
+                  </button>}
               </div>
               <div className="flex items-center justify-between my-3">
                   <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/register">
-                  Don't Have An Account?
+                    Don't Have An Account?
                   </Link>
-                  <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
-                  Forgot Password?
-                  </Link>
+                  {/* <Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
+                    Forgot Password?
+                  </Link> */}
               </div>
           </form>
         </div>
