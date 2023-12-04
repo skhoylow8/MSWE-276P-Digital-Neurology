@@ -25,7 +25,15 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
         Object.keys(res).map((key) => {
             const ids = key.split("_");
-            const answer = typeof res[key] === 'string' ? res[key] : res[key].join();
+            let answer;
+
+            if(typeof res[key] === 'string'){
+                answer = res[key]
+            } else if(typeof res[key] === 'number'){
+                answer = res[key].toString();
+            } else {
+                answer = res[key].join();
+            }
 
             results.push({
                 survey_id: ids[0],

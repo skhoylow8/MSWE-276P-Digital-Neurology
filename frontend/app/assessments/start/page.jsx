@@ -33,7 +33,7 @@ const formatQuestions = (data) => {
         "sc": "rating", // should be "rating" but need a min/max val, // includes scale/rating
         "fr": "comment", // includes free response
         "cb": "checkbox", // includes multiple answers
-        "yn": "boolean", // includes yes/no 
+        "yn": "radiogroup", // includes yes/no 
     }
 
     data.surveys.map((survey) => {
