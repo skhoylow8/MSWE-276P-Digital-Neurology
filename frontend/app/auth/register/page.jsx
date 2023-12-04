@@ -83,7 +83,7 @@ export const Register = (props) => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200 flex flex-col">
+    <div className="hero h-full bg-base-200 flex flex-col overflow-scroll">
       <img className="hero-content mt-8 lg:w-1/2 w-2/3 flex self-center" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
       <div className="hero-content flex-col lg:flex-row max-w-4xl">
         <div className="text-center lg:text-left">
