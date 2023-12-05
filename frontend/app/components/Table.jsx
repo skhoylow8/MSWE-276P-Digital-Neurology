@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
 import { useRouter } from "next/navigation";
@@ -33,17 +33,48 @@ const DashboardRow = ({ id, name, status, completedOn }) => {
 };
 
 const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
+  useEffect(() => {
+    const downloadButton = document.getElementById('downloadCSV_' + id);
+
+    fetch(`http://localhost:8000/response/download/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                alert("Failed to download file");
+                throw new Error("Failed to download file");
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Convert response to Blob
+            const blobUrl = URL.createObjectURL(blob);
+
+            let parent = downloadButton.parentNode;
+
+            // Create a downloadable link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = blobUrl;
+
+            // set the wrapper as child (instead of the element)
+            parent.replaceChild(downloadLink, downloadButton);
+            // set element as child of wrapper
+            downloadLink.appendChild(downloadButton);
+        })
+        .catch((error) => {
+          console.error('Error downloading CSV:', error)
+        });
+  }, []);
+
   const handleStartAssessment = (id, consent) => {
     document.getElementById("consentText").textContent = consent; // uses passed on consent text to show on modal
     document
       .getElementById("start-assessment-modal")
       .setAttribute("data-id", id);
     document.getElementById("start-assessment-modal").showModal();
-  };
-
-  const handleDownloadCSV = (id) => {
-    console.log(id);
-    // make get request to download csv with results
   };
 
   return (
@@ -55,13 +86,13 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
       </td>
       <td className="flex flex-row justify-around">
         <svg
+          id={'downloadCSV_' + id}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
           className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200"
-          onClick={() => handleDownloadCSV(id)}
         >
           <path
             strokeLinecap="round"
