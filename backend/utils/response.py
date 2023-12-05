@@ -1,9 +1,11 @@
 import csv
+import datetime
+from io import StringIO
 
 from models.response import AssessmentResponse, AnsweredQuestion
 
 
-def create_csv_file(assessment_responses: [AssessmentResponse]):
+def create_csv_data(assessment_responses: [AssessmentResponse]):
     # TODO do we have to export for a specific duration
     print("total docs:", len(assessment_responses))
     if len(assessment_responses) == 0:
@@ -38,18 +40,19 @@ def create_csv_file(assessment_responses: [AssessmentResponse]):
         }
         rows.append(row)
 
-    # TODO  what to name the file
     headers = ["id", "created_on", "assessment_id", "patient_id"] + questions
-    filename = "assessments.csv"
-    with open(filename, "w") as file:
-        csv_writer = csv.DictWriter(file, fieldnames=headers)
-        csv_writer.writeheader()
-        csv_writer.writerows(rows)
+
+    output = StringIO()
+
+    csv_writer = csv.DictWriter(output, fieldnames=headers)
+    csv_writer.writeheader()
+    csv_writer.writerows(rows)
+
+    return output.getvalue()
 
 
 def get_questions(answered_questions: [AnsweredQuestion]) -> []:
     questions = list()
     for i in answered_questions:
         questions.append(i.get('question_text'))
-    print(questions)
     return questions
