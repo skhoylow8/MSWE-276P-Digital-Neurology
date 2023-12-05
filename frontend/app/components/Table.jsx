@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 import Cookies from "universal-cookie";
 
 const formatDate = (date) => {
@@ -157,7 +157,6 @@ const Table = ({ page, data }) => {
     setIsButtonDisabled(true);
     const modal = document.getElementById("start-assessment-modal");
     const assessmentID = modal.dataset.id;
-    const cookies = new Cookies();
 
     const consentRes = e.target.elements.consentQ.value;
     const firstName = e.target.elements.firstName.value;
@@ -172,7 +171,6 @@ const Table = ({ page, data }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          // _id: patientID,
           first_name: firstName,
           last_name: lastName,
           email: email,
@@ -192,7 +190,7 @@ const Table = ({ page, data }) => {
           assessmentID + "_" + patientID
         )}`
       );
-
+      return true;
     } else {
       alert("Please see researcher for further instructions.");
       setIsButtonDisabled(false);

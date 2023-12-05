@@ -121,10 +121,6 @@ function SurveyComponent({ data, assessmentID, patientID }) {
             <Survey
                 currentPageNo={pageNo}
                 model={survey}
-                navigateToUrl={"http://localhost:8000/app"}
-                onNavigateToUrl={function (sender, options) {
-                    window.location.href = options.url;
-                }}
             />
             {renderExternalNavigation()}
         </div>
