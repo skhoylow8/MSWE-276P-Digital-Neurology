@@ -186,7 +186,7 @@ const DuplicateSurvey = () => {
 									</select>
 									<label>Choices</label>
 									<p className='text-xs pb-1'>Please type in the possible choices for the question separated by commas.</p>
-									<textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,...">{questionType === 'yn' ? 'Yes,No' : ''}</textarea>
+									<textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,..." defaultValue={questionType === 'yn' ? 'Yes,No' : ''}></textarea>
 									<div className="flex justify-center mt-4">
 										<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Add Question</button>
 									</div>
