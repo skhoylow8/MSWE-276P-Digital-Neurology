@@ -119,6 +119,8 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
         // Clean up: remove the link and revoke the URL object
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+      } else if(response.status == 400){
+        alert("No responses found for this assessment.");
       } else {
         console.error('File download failed:', response.status, response.statusText);
       }

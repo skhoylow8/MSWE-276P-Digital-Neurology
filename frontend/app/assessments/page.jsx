@@ -158,6 +158,7 @@ const Assessments = () => {
             </div>
             {!isLoading && data && <Table page="assessments" data={data} />}
             {!isLoading && !data && "data fetch failed"}
+            {!isLoading && data.length==0 && <p className="text-stone-900 text-center">No assessments found</p>}
             {isLoading && (
               <div className="flex justify-center">
                 <span className="text-stone-900 loading loading-spinner loading-lg"></span>

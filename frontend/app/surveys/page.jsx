@@ -60,6 +60,7 @@ const Surveys = () => {
                             </button>
                         </div>
                         {!isLoading && <Table page="surveys" data={data} />}
+                        {!isLoading && data.length==0 && <p className="text-stone-900 text-center">No surveys found</p>}
                         {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                 </div>
