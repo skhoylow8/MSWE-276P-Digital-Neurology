@@ -6,12 +6,6 @@ from models.response import AssessmentResponse, AnsweredQuestion
 
 
 def create_csv_data(assessment_responses: [AssessmentResponse]):
-    # TODO do we have to export for a specific duration
-    print("total docs:", len(assessment_responses))
-    if len(assessment_responses) == 0:
-        print("no assessments!")
-        return
-
     # get questions using one assessment response, all assessment responses will have same questions
     questions = list()
     rows = list()
