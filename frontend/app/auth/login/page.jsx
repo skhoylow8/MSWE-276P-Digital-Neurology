@@ -66,6 +66,7 @@ export const Login = (props) => {
             const email = result.researcher_email
 
             cookies.set("authenticated", true, { path: "/" });
+            cookies.set("loggedIn", true, { path: "/" });
             cookies.set("researcherID", researcherID, { path: "/" });
             cookies.set("firstName", firstName, { path: "/" });
             cookies.set("email", email, { path: "/" });

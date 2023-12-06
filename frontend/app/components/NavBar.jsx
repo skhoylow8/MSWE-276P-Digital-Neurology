@@ -22,6 +22,7 @@ const NavBar = (props) => {
             if (res.status === 200) {
                 // Successful logout
                 cookies.set("authenticated", false, { path: '/' });
+                cookies.set("loggedIn", false, { path: "/" });
                 cookies.set("researcherID", null, { path: '/' });
                 cookies.set("firstName", null, { path: '/' });
                 cookies.set("email", null, { path: '/' });
