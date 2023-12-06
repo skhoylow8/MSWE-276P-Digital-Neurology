@@ -79,14 +79,8 @@ function SurveyComponent({ data, assessmentID, patientID }) {
                 const errorData = await response.json();
                 throw new Error(errorData.detail);
             } 
-    
-            // Successful logout
-            cookies.set("authenticated", false, { path: '/' });
-            cookies.set("researcherID", null, { path: '/' });
-            cookies.set("firstName", null, { path: '/' });
-            cookies.set("email", null, { path: '/' });
 
-            router.push("/");
+            survey.doComplete();
         } catch (error) {
             console.error(error.message)
         }

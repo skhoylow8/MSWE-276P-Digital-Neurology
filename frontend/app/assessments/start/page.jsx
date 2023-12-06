@@ -66,7 +66,6 @@ const formatQuestions = (data) => {
 const StartAssessment = () => {
     const searchParams = useSearchParams();
     const cookies = new Cookies();
-    const [isFullScreen, setIsFullScreen] = useState(false);
 
     const ids = searchParams.get('data').split("_");
     const assessmentID = ids[0];
@@ -76,36 +75,7 @@ const StartAssessment = () => {
 
     useEffect(() => {
         cookies.set("authenticated", false, { path: '/' });
-
-        document.addEventListener("fullscreenchange", fullscreenchanged);
     }, []);
-
-    
-    const handleFullScreen = () => {
-        const element = document.documentElement; // Fullscreen the entire document
-
-        const requestFullscreen = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
-
-        if (requestFullscreen) {
-            requestFullscreen.call(element);
-        }
-
-        setIsFullScreen(true);
-    }
-
-    function fullscreenchanged(event) {
-        // document.fullscreenElement will point to the element that
-        // is in fullscreen mode if there is one. If not, the value
-        // of the property is null.
-        if (document.fullscreenElement) {
-            console.log(
-                `Element: ${document.fullscreenElement.id} entered fullscreen mode.`,
-            );
-        } else {
-            setIsFullScreen(false);
-            console.log("Leaving fullscreen mode.");
-        }
-    }
 
 
     if (error) {
@@ -116,12 +86,7 @@ const StartAssessment = () => {
     return (
         <div id="surveyElement" className='flex justify-center items-center h-screen'>
             {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
-            {!isLoading && !isFullScreen && 
-                <div className='flex flex-col'>
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 text-center pb-8">Please enter fullscreen mode to take assessment</h2>
-                    <button className="w-9/12 self-center line-height-24 font-semibold font-open-sans text-base px-8 py-3 rounded-md shadow-md bg-stone-900 text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent" onClick={handleFullScreen}>Enter Fullscreen</button>
-                </div>}
-            {!isLoading && isFullScreen && 
+            {!isLoading &&
                 <div className='bg-gray-100 absolute top-0 left-0 right-0 bottom-0 h-80vh'>
                     <SurveyComponent data={data} assessmentID={assessmentID} patientID={patientID} />
                 </div> }

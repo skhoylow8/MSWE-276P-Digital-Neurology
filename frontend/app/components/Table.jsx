@@ -185,12 +185,14 @@ const Table = ({ page, data }) => {
       const responseData = await response.json();
       const patientID = responseData._id;
 
-      router.push(
-        `/assessments/start?data=${encodeURIComponent(
+      window.open(
+        `assessments/start?data=${encodeURIComponent(
           assessmentID + "_" + patientID
-        )}`
+        )}`, "Assessment"
       );
-      return true;
+
+      modal.close();
+      setIsButtonDisabled(false);
     } else {
       alert("Please see researcher for further instructions.");
       setIsButtonDisabled(false);
