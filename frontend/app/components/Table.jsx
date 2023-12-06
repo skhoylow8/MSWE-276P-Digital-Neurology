@@ -47,9 +47,11 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
                 alert("Failed to download file");
                 throw new Error("Failed to download file");
             }
+            console.log(response.headers)
             return response.blob();
         })
         .then(blob => {
+          console.log(blob)
             // Convert response to Blob
             const blobUrl = URL.createObjectURL(blob);
 
