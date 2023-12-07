@@ -18,22 +18,11 @@ const fetcher = async (url) => {
         throw new Error('Failed to fetch data');
     }
 
-    const results = await response.json()
-    console.log(results)
-    return results;
+    return await response.json();
 }
 
 const Participant = (props) => {
-    const { data, error, isLoading } = useSWR('http://localhost:8000/participant/', fetcher); // will have to change url once other branch is merged
-    const date = new Date(); 
-
-    const participantsData = [
-        { participantID: '1', assessmentName: 'Assessment 1', status: 'completed', completedOn: date },
-        { participantID: '2', assessmentName: 'Assessment 2', status: 'completed', completedOn: date },
-        { participantID: '3', assessmentName: 'Assessment 1', status: 'incompleted', completedOn: date },
-        { participantID: '4', assessmentName: 'Assessment 1', status: 'completed', completedOn: date },
-        { participantID: '5', assessmentName: 'Assessment 2', status: 'incompleted', completedOn: date },
-    ]
+    const { data, error, isLoading } = useSWR('http://localhost:8000/participant/', fetcher);
 
     return (
         <div className="min-h-full bg-gray-50">
