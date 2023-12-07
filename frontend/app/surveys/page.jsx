@@ -11,7 +11,6 @@ const fetcher = async (url) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 

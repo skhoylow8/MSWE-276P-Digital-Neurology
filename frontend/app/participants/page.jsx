@@ -1,24 +1,28 @@
 'use client';
-import React, { useEffect} from 'react'
-import Table from '../components/Table';
-import NavBar from '../components/NavBar';
+import React, { useEffect, useState } from 'react';
+import useSWR from 'swr'; 
+import { useRouter } from 'next/navigation';
+import Table from '@/app/components/Table';
+import NavBar from '@/app/components/NavBar';
+import Cookies from 'universal-cookie';
+
+const fetcher = async (url) => {
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch data');
+    }
+
+    return await response.json();
+}
 
 const Participant = (props) => {
-    const date = new Date(); 
-
-    const participantsData = [
-        { participantID: '1', assessmentName: 'Assessment 1', status: 'completed', completedOn: date },
-        { participantID: '2', assessmentName: 'Assessment 2', status: 'completed', completedOn: date },
-        { participantID: '3', assessmentName: 'Assessment 1', status: 'incompleted', completedOn: date },
-        { participantID: '4', assessmentName: 'Assessment 1', status: 'completed', completedOn: date },
-        { participantID: '5', assessmentName: 'Assessment 2', status: 'incompleted', completedOn: date },
-    ]
-
-    useEffect(() => { 
-        if(!window.localStorage.getItem("authenticated")){
-            router.push('/')
-        }
-     }, []);
+    const { data, error, isLoading } = useSWR('http://localhost:8000/participant/', fetcher);
 
     return (
         <div className="min-h-full bg-gray-50">
@@ -32,7 +36,9 @@ const Participant = (props) => {
                 <div className="card bg-base-100 drop-shadow-xl m-5">
                     <div className="card-body">
                         <h2 className="card-title text-stone-900 text-2xl">Participants</h2>
-                        <Table page="participants" data={participantsData} />
+                        {!isLoading && <Table page="participants" data={data} />}
+                        {!isLoading && data !== undefined && data.length == 0 && <p className="text-stone-900 text-center">No participants found.</p>}
+                        {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                     </div>
                 
