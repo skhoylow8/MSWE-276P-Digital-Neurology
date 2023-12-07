@@ -11,7 +11,6 @@ const fetcher = async (url) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
@@ -19,11 +18,13 @@ const fetcher = async (url) => {
         throw new Error('Failed to fetch data');
     }
 
-    return await response.json();
+    const results = await response.json()
+    console.log(results)
+    return results;
 }
 
 const Participant = (props) => {
-    const { data, error, isLoading } = useSWR(`http://localhost:8000/participant/${window.localStorage.getItem("researcherID")}`, fetcher); // will have to change url once other branch is merged
+    const { data, error, isLoading } = useSWR('http://localhost:8000/participant/', fetcher); // will have to change url once other branch is merged
     const date = new Date(); 
 
     const participantsData = [
@@ -47,7 +48,7 @@ const Participant = (props) => {
                     <div className="card-body">
                         <h2 className="card-title text-stone-900 text-2xl">Participants</h2>
                         {!isLoading && <Table page="participants" data={data} />}
-                        {!isLoading && data.length == 0 && <p className="text-stone-900 text-center">No participants found.</p>}
+                        {!isLoading && data !== undefined && data.length == 0 && <p className="text-stone-900 text-center">No participants found.</p>}
                         {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
                     </div>
                     </div>

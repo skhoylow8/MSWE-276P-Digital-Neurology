@@ -89,18 +89,14 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
   );
 };
 
-const ParticipantRow = ({ id, assessments }) => {
+const ParticipantRow = ({ patientID, assessmentName, createdOn }) => {
   return (
-    <>{
-      assessments.map((assessment) => {
-        return (<tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
-          <td>{ id }</td>
-          <td>{ assessment.name }</td>
-          <td><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
-          <td className=''>{ formatDate(new Date(assessment.created_on)) } </td>
-        </tr>
-      )})
-    }</>
+    <tr className="bg-white text-stone-900 hover:bg-stone-50">
+      <td>{ patientID }</td>
+      <td>{ assessmentName }</td>
+      <td><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
+      <td className=''>{ formatDate(new Date(createdOn)) } </td>
+    </tr>
   )
 }
 
@@ -216,22 +212,22 @@ const Table = ({ page, data }) => {
                 </thead>
                 <tbody>
                     {
-                        page == 'dashboard' && data.length > 0 && data.map((row) => {
+                        page == 'dashboard' && data !== undefined && data.length > 0 && data.map((row) => {
                             return <DashboardRow key={row.id} id={row.id} name={row.name} status={row.status} completedOn={row.completedOn} />
                         })
                     }
                     {
-                        page == 'assessments' && data.length > 0 && data.map((row, index) => {
+                        page == 'assessments' && data !== undefined && data.length > 0 && data.map((row, index) => {
                             return <AssessmentRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} consentText={row.consent_text} />
                         })
                     }
                     {
-                        page == 'participants' && data.length > 0 && data.map((row) => {
-                            return <ParticipantRow key={row._id} id={row._id} assessments={row.assessment_ids} />
+                        page == 'participants' && data !== undefined && data.length > 0 && data.map((row, index) => {
+                            return <ParticipantRow key={index} patientID={row.patient_id} assessmentName={row.assessment_name} createdOn={row.created_on} />
                         })
                     }
                     {
-                        page == 'surveys' && data.length > 0 && data.map((row, index) => {
+                        page == 'surveys' && data !== undefined && data.length > 0 && data.map((row, index) => {
                             return <SurveyRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} totalNumOfQ={row.questions.length} researcherID={row.researcherId} />
                         })
                     }
