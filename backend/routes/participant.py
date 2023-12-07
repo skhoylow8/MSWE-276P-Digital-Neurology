@@ -57,6 +57,6 @@ async def list_participants(request: Request, user: Annotated[Future, Depends(ge
         }
         responses.append(response)
 
-    return assessment_responses
+    return responses
 
   
