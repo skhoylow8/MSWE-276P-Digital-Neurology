@@ -89,15 +89,19 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
   );
 };
 
-const ParticipantRow = ({ id, name, status, completedOn }) => {
-    return (
-        <tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
-            <td>{ id }</td>
-            <td>{ name }</td>
-            <td><span className={status == 'completed' ? "badge badge-ghost bg-green-300 rounded-md" : "badge badge-ghost bg-yellow-300 rounded-md" }>{ status.charAt(0).toUpperCase() + status.substring(1) }</span></td>
-            <td className=''>{ formatDate(completedOn) } </td>
+const ParticipantRow = ({ id, assessments }) => {
+  return (
+    <>{
+      assessments.map((assessment) => {
+        return (<tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
+          <td>{ id }</td>
+          <td>{ assessment.name }</td>
+          <td><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
+          <td className=''>{ formatDate(new Date(assessment.created_on)) } </td>
         </tr>
-    )
+      )})
+    }</>
+  )
 }
 
 const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID }) => {
@@ -140,12 +144,12 @@ const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID
 }
 
 const Table = ({ page, data }) => {
-    const tableHeaders = {
-        "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
-        "assessments": ["Assessment Name", "Assessment Description", "Created On"],
-        "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
-        "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
-    };
+  const tableHeaders = {
+    "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
+    "assessments": ["Assessment Name", "Assessment Description", "Created On"],
+    "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
+    "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
+  };
 
   const router = useRouter();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -223,7 +227,7 @@ const Table = ({ page, data }) => {
                     }
                     {
                         page == 'participants' && data.length > 0 && data.map((row) => {
-                            return <ParticipantRow key={row.participantID} id={row.participantID} name={row.assessmentName} status={row.status} completedOn={row.completedOn} />
+                            return <ParticipantRow key={row._id} id={row._id} assessments={row.assessment_ids} />
                         })
                     }
                     {
