@@ -46,7 +46,7 @@ async def list_participants(id: str, request: Request):
             assessmentForParticularParticipant = await request.app.mongodb["Assessment"].find_one({"_id": assessment})
             if(assessmentForParticularParticipant.get("researcher_id") == id and 
             await request.app.mongodb["AssessmentResponse"].find_one({"assessment_id": assessment}) is not None) :
-               assessment_obj.append(await request.app.mongodb["Assessment"].find_one({"_id": assessment}))
+               assessment_obj.append(await request.app.mongodb["AssessmentResponse"].find_one({"assessment_id": assessment}))
 
       if len(assessment_obj) != 0:
          participant["assessment_ids"] = assessment_obj  
