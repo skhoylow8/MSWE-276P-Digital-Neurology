@@ -1,10 +1,12 @@
 'use client';
 import React, { useEffect } from 'react';
-import Table from '../components/Table';
-import NavBar from '../components/NavBar';
-import { useRouter } from 'next/navigation';
+import Table from '@/app/components/Table';
+import NavBar from '@/app/components/NavBar';
+import isAuth from '@/app/components/isAuth';
+import Cookies from 'universal-cookie';
 
 const Dashboard = (props) => {
+    const cookies = new Cookies();
     const date = new Date(); 
 
     const dashboardData = [
@@ -14,33 +16,13 @@ const Dashboard = (props) => {
         { id: '4', name: 'Assessment 1', status: 'completed', completedOn: date },
         { id: '5', name: 'Assessment 2', status: 'completed', completedOn: date },
     ]
-    const router = useRouter();
-
-    const handleGetAssessments = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await fetch('http://localhost:8000/survey');
-
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    useEffect(() => { 
-        if(!window.localStorage.getItem('authenticated')){
-            router.push('/');
-        }
-     }, []);
 
     return (
         <div className="min-h-full bg-gray-50">
             <NavBar page="dashboard"/>
             <header className="bg-white shadow ">
                 <div className="max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome, {window.localStorage.getItem("firstName")}</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome, {cookies.get("firstName")}</h1>
                 </div>
             </header>
             <main>
@@ -56,4 +38,4 @@ const Dashboard = (props) => {
     )
 }
 
-export default Dashboard;
+export default isAuth(Dashboard);

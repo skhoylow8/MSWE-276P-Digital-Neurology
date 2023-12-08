@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Cookies from "universal-cookie";
 
 export const Register = (props) => {
   const router = useRouter();
@@ -63,10 +64,12 @@ export const Register = (props) => {
         const firstNameRes = result.researcher_name
         const emailRes = result.researcher_email
 
-        window.localStorage.setItem("authenticated", true);
-        window.localStorage.setItem("researcherID", researcherID);
-        window.localStorage.setItem("firstName", firstNameRes);
-        window.localStorage.setItem("email", emailRes);
+        const cookies = new Cookies();
+        cookies.set("authenticated", true, { path: "/" });
+        cookies.set("loggedIn", true, { path: "/" });
+        cookies.set("researcherID", researcherID, { path: "/" });
+        cookies.set("firstName", firstNameRes, { path: "/" });
+        cookies.set("email", emailRes, { path: "/" });
 
         router.push('/assessments')
 
@@ -81,9 +84,9 @@ export const Register = (props) => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200">
-      <img className="lg:w-1/2 w-2/3 flex self-start lg:p-2 p-5 lg:mt-3 mt-8" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
-      <div className="hero-content flex-col lg:flex-row max-w-4xl mt-6">
+    <div className="hero h-full bg-base-200 flex flex-col overflow-scroll">
+      <img className="hero-content mt-8 lg:w-1/2 w-2/3 flex self-center" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
+      <div className="hero-content flex-col lg:flex-row max-w-4xl">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold text-stone-700">Sign Up</h1>
           <p className="py-6 text-stone-500 lg:text-sm text-lg font-bold">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.</p>

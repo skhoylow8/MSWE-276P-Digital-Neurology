@@ -8,14 +8,15 @@ import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
 import Modal from '@/app/components/Modal';
+import isAuth from '@/app/components/isAuth';
 import EditableLabel from 'react-inline-editing';
+import Cookies from 'universal-cookie';
 
 const fetcher = async (url) => {
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
 		},
 	});
 
@@ -82,18 +83,19 @@ const DuplicateSurvey = () => {
 	}
 
 	const handleDuplicateSurvey = async () => {
+		const cookies = new Cookies();
+		const researcherID = cookies.get('researcherID').toString();
 		// make post reuqest to create a new survey
 		const response = await fetch(`http://localhost:8000/survey`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
 			},
 			body: JSON.stringify({
 				"name": surveyName,
 				"desc": surveyDesc,
 				"questions": questions,
-				"researcherId": window.localStorage.getItem('researcherID'),
+				"researcherId": researcherID,
 			}),
 		});
 
@@ -184,7 +186,7 @@ const DuplicateSurvey = () => {
 									</select>
 									<label>Choices</label>
 									<p className='text-xs pb-1'>Please type in the possible choices for the question separated by commas.</p>
-									<textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,..."></textarea>
+									<textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,..." defaultValue={questionType === 'yn' ? 'Yes,No' : ''}></textarea>
 									<div className="flex justify-center mt-4">
 										<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Add Question</button>
 									</div>
@@ -228,4 +230,4 @@ const DuplicateSurvey = () => {
 	)
 }
 
-export default DuplicateSurvey
+export default isAuth(DuplicateSurvey);

@@ -1,8 +1,11 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from "next/navigation";
 import useSWR from 'swr'; 
-import SurveyComponent from "../../components/SurveyComponent";
+import SurveyComponent from "@/app/components/SurveyComponent";
+import isAuth from '@/app/components/isAuth';
+import Cookies from 'universal-cookie';
+import { FullScreenTakeover } from '@qualtrics/ui-react';
 
 const fetcher = async (url) => {
     // get survey questions using id
@@ -10,7 +13,6 @@ const fetcher = async (url) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
@@ -63,7 +65,7 @@ const formatQuestions = (data) => {
 
 const StartAssessment = () => {
     const searchParams = useSearchParams();
-    const router = useRouter();
+    const cookies = new Cookies();
 
     const ids = searchParams.get('data').split("_");
     const assessmentID = ids[0];
@@ -72,29 +74,9 @@ const StartAssessment = () => {
     const { data, error, isLoading } = useSWR(`http://localhost:8000/assessment/${assessmentID}`, fetcher)
 
     useEffect(() => {
-        const handleBackButton = (event) => {
-          // You can add additional conditions if needed
-          // For example, only redirect if the user is on a specific page
-          if (router.pathname !== '/assessments/start') {
-            // Log user out if they press back button
-            window.localStorage.setItem("token", null);
-            window.localStorage.setItem("authenticated", false);
-            window.localStorage.setItem("researcherID", null);
-            window.localStorage.setItem("firstName", null);
-            window.localStorage.setItem("email", null);
+        cookies.set("authenticated", false, { path: '/' });
+    }, []);
 
-            router.push('/');
-          }
-        };
-    
-        // Listen for the 'popstate' event
-        window.addEventListener('popstate', handleBackButton);
-    
-        // Cleanup the event listener when the component is unmounted
-        return () => {
-          window.removeEventListener('popstate', handleBackButton);
-        };
-    }, [router]);
 
     if (error) {
         console.error('Error fetching data:', error);
@@ -102,11 +84,14 @@ const StartAssessment = () => {
     }
 
     return (
-        <>
+        <div id="surveyElement" className='flex justify-center items-center h-screen'>
             {isLoading && <div className='flex justify-center'><span className="text-stone-900 loading loading-spinner loading-lg"></span></div>}
-            {!isLoading && <div id="surveyElement" className='bg-gray-100 absolute top-0 left-0 right-0 bottom-0 h-80vh'><SurveyComponent data={data} assessmentID={assessmentID} patientID={patientID} /></div> } {/*<SurveyComponent data={data}/>*/}
-        </>
+            {!isLoading &&
+                <div className='bg-gray-100 absolute top-0 left-0 right-0 bottom-0 h-80vh'>
+                    <SurveyComponent data={data} assessmentID={assessmentID} patientID={patientID} />
+                </div> }
+        </div>
     )
 }
 
-export default StartAssessment
+export default isAuth(StartAssessment);

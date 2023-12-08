@@ -3,6 +3,7 @@ import React, { useEffect, useState} from 'react'
 import Table from '@/app/components/Table';
 import NavBar from '@/app/components/NavBar';
 import Modal from "@/app/components/Modal"
+import isAuth from '@/app/components/isAuth';
 import useSWR from 'swr'; 
 import { useRouter } from 'next/navigation';
 
@@ -24,12 +25,6 @@ const fetcher = async (url) => {
 const Surveys = () => {
     const { data, error, isLoading } = useSWR('http://localhost:8000/survey', fetcher)
     const router = useRouter();
-
-    useEffect(() => { 
-        if(!window.localStorage.getItem("authenticated")){
-            router.push('/')
-        }
-    }, []);
 
     const handleCreateSurvey = (e) => {
         e.preventDefault();
@@ -77,4 +72,4 @@ const Surveys = () => {
         </div>
     )
 }
-export default Surveys;
+export default isAuth(Surveys);

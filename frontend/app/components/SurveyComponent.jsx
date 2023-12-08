@@ -1,14 +1,17 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import "survey-core/defaultV2.min.css";
 import theme from "../../public/utils/survey_theme.json";
+import Cookies from "universal-cookie";
+import { useRouter } from "next/navigation";
 
 function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
     const [isRunning, setIsRunning] = useState(true);
+    const router = useRouter();
 
     survey.applyTheme(theme);
 
@@ -49,6 +52,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
     const nextPage = () => { survey.nextPage(); };
     const endSurvey = async () => { 
         let surveryResults = survey.data;
+        const cookies = new Cookies();
 
         survey.getAllQuestions().map((question) => {
             if(!surveryResults[question.name]){
@@ -75,8 +79,8 @@ function SurveyComponent({ data, assessmentID, patientID }) {
                 const errorData = await response.json();
                 throw new Error(errorData.detail);
             } 
-    
-            const result = await response.json();
+
+            survey.doComplete();
         } catch (error) {
             console.error(error.message)
         }

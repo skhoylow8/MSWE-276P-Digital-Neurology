@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Table from '@/app/components/Table';
 import NavBar from '@/app/components/NavBar';
 import Cookies from 'universal-cookie';
+import isAuth from '@/app/components/isAuth';
 
 const fetcher = async (url) => {
     const response = await fetch(url, {
@@ -47,4 +48,4 @@ const Participant = (props) => {
     )
 }
 
-export default Participant;
+export default isAuth(Participant);

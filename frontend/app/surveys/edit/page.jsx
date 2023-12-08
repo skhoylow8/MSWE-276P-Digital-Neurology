@@ -8,14 +8,15 @@ import FreeResponse from '@/app/components/questionTypes/FreeResponse';
 import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
 import Modal from '@/app/components/Modal';
+import isAuth from '@/app/components/isAuth';
 import EditableLabel from 'react-inline-editing';
+import Cookies from 'universal-cookie';
 
 const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
         },
     });
 
@@ -82,23 +83,25 @@ const EditSurvey = () => {
     }
 
     const handleUpdateSurvey = async () => {
+        const cookies = new Cookies();
+        const researcherID = cookies.get('researcherID').toString();
         // make put reuqest to update survey
         const response = await fetch(`http://localhost:8000/survey/${surveyID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.localStorage.getItem('token')}`,
             },
             body: JSON.stringify({
                 "name": surveyName,
                 "desc": surveyDesc,
                 "questions": questions,
-                "researcherId": window.localStorage.getItem('researcherID'),
+                "researcherId": researcherID,
             }),
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch data');
+            const errorData = await response.json();
+            throw new Error(errorData.detail);
         }
 
         router.push('/surveys');
@@ -184,7 +187,7 @@ const EditSurvey = () => {
                                     </select>
                                     <label>Choices</label>
                                     <p className='text-xs pb-1'>Please type in the possible choices for the question separated by commas.</p>
-                                    <textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,..."></textarea>
+                                    <textarea id="questionChoices" className="textarea textarea-bordered w-full" placeholder="a,b,c,d,e,..." defaultValue={questionType === 'yn' ? 'Yes,No' : ''}></textarea>
                                     <div className="flex justify-center mt-4">
                                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">Add Question</button>
                                     </div>
@@ -228,35 +231,4 @@ const EditSurvey = () => {
     )
 }
 
-export default EditSurvey;
-
-{/* <div className="card bg-base-100 drop-shadow-xl m-5">
-                        <div className="card-body  text-stone-900">
-                            <div className='flex flex-row justify-between'>
-                                <h2 className="card-title text-2xl">{data.name}</h2>
-                                <button className="shadow-lg w-8 h-8 rounded-full flex items-center cursor-pointer hover:bg-stone-200 hover:shadow">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-900 mx-auto">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <p>{data.desc}</p>
-                            <div id='question-container' className='pt-5'>
-                            {
-                                data.questions.map((question, index) => {
-                                    if(question.type == 'mc'){
-                                        return <MultipleChoice key={index} question={question} />
-                                    } else if(question.type == 'yn'){
-                                        return <MultipleChoice key={index} question={question} />
-                                    } else if(question.type == 'sc'){
-                                        return <Rating key={index} question={question} />
-                                    } else if(question.type == 'fr'){
-                                        return <FreeResponse key={index} question={question} />
-                                    } else if(question.type == 'cb'){
-                                        return <CheckBox key={index} question={question} />
-                                    }
-                                })
-                            }
-                            </div>
-                        </div>
-                    </div> */}
+export default isAuth(EditSurvey);
