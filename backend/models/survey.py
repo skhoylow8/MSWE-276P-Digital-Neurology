@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from pydantic import BaseModel, Field
@@ -12,6 +13,7 @@ class Question(BaseModel):
 
 class Survey(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    created_on: str = Field(default_factory=datetime.datetime.now)
     name: str = Field(...)
     desc: str = Field(...)
     questions: list[Question]

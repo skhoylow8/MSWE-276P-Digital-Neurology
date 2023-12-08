@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Request, status, Body
+import datetime
+
+from fastapi import APIRouter, Request, status, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse
+from requests import Response
 
 from models.response import AssessmentResponse, AssessmentResponseDTO
-from utils.response import create_csv_file
+from utils.response import create_csv_data
 
 response_router = APIRouter()
 
@@ -29,10 +33,8 @@ async def create_response(request: Request, response: AssessmentResponseDTO = Bo
     for item in response['data']:
         question_type = survey_question_dict[item['survey_id']][item['question_id']][1]
         question_choices = survey_question_dict[item['survey_id']][item['question_id']][2]
-        print(f"question_choices : {question_choices}")
         if question_type == "cb":
             answers = item['answer'].split(',')
-            print(f"answers: {answers}")
             for choice in question_choices:
                 new_data.append({
                     'survey_id': item['survey_id'],
@@ -47,7 +49,6 @@ async def create_response(request: Request, response: AssessmentResponseDTO = Bo
     assessment_response = AssessmentResponse(
         assessment_id=response.get('assessment_id'),
         patient_id=response.get('patient_id'),
-        # data=response.get('data')
         data=new_data
     )
     assessment_response = jsonable_encoder(assessment_response)
@@ -57,12 +58,19 @@ async def create_response(request: Request, response: AssessmentResponseDTO = Bo
 
 
 @response_router.get("/download/{id}", response_description="Download a single assessment response")
-async def download_response(request: Request, id:str):
-    responses = []
+async def download_response(request: Request, id: str):
     find_criteria = {"assessment_id": id}
     responses_list = await request.app.mongodb["AssessmentResponse"].find(find_criteria).to_list(length=None)
+    if len(responses_list) == 0:
+        print("no assessments!")
+        raise HTTPException(status_code=400, detail="No assessments present")
 
-    create_csv_file(responses_list)
+    assessment = await request.app.mongodb["Assessment"].find_one({"_id": id})
 
-    # TODO what to return here
-    return responses
+    filename = assessment.get('name') + '-' + str(datetime.datetime.now()) + '.csv'
+    headers = {"Content-Disposition": f"attachment; filename={filename}"}
+
+    csv_data = create_csv_data(responses_list)
+    response = StreamingResponse(iter([csv_data]), media_type="text/csv", headers=headers)
+
+    return response

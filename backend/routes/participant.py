@@ -1,14 +1,15 @@
 import os
+from asyncio import Future
+from typing import Annotated
 
 from fastapi import APIRouter, Request, status, Body, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from models.participant import Participant, ParticipantRequest
-
+from utils.auth import get_current_user
 
 participant_router = APIRouter()
-
 
 
 @participant_router.post("/", response_description="Add new participant")
@@ -35,20 +36,27 @@ async def create_participant(request: Request, participant_request: ParticipantR
       return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_participant)
         
     
-@participant_router.get("/{id}", response_description="Get all Participants and their Assessment names")
-async def list_participants(id: str, request: Request):
-    participants = []
-    participant_list = await request.app.mongodb["Participant"].find().to_list(length=None)
-    for participant in participant_list:
-      assessment_obj=[]
-      for assessment in participant.get('assessment_ids') :
-         if(await request.app.mongodb["Assessment"].find_one({"_id": assessment})) is not None:
-            assessmentForParticularParticipant = await request.app.mongodb["Assessment"].find_one({"_id": assessment})
-            if(assessmentForParticularParticipant.get("researcher_id") == id) :
-               assessment_obj.append(await request.app.mongodb["Assessment"].find_one({"_id": assessment}))
+@participant_router.get("/", response_description="Get all Participants and their Assessment names")
+async def list_participants(request: Request, user: Annotated[Future, Depends(get_current_user)]):
+    user = await user
+    filter_criteria = {"researcher_id": user.get('_id')}
+    projection = {"_id": 1}
+    assessment_ids = await request.app.mongodb["Assessment"].find(filter_criteria, projection).to_list(length=None)
+    assessment_ids = [assessment_id['_id'] for assessment_id in assessment_ids]
+    assessment_responses = await request.app.mongodb["AssessmentResponse"]\
+        .find({"assessment_id": {"$in": assessment_ids}})\
+        .sort("created_on", -1)\
+        .to_list(length=None)
+    responses = []
+    for assessment_response in assessment_responses:
+        assessment = await request.app.mongodb["Assessment"].find_one({"_id": assessment_response["assessment_id"]})
+        response = {
+            "patient_id": assessment_response.get('patient_id'),
+            "assessment_name": assessment.get('name'),
+            "created_on": assessment_response.get('created_on')
+        }
+        responses.append(response)
 
-      if len(assessment_obj) != 0:
-         participant["assessment_ids"] = assessment_obj  
-         participants.append(participant)
-    return participants
+    return responses
+
   

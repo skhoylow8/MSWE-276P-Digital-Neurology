@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
 import { useRouter, redirect } from "next/navigation";
@@ -34,6 +34,45 @@ const DashboardRow = ({ id, name, status, completedOn }) => {
 };
 
 const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
+  // useEffect(() => {
+  //   const downloadButton = document.getElementById('downloadCSV_' + id);
+
+  //   fetch(`http://localhost:8000/response/download/${id}`, {
+  //           method: "GET",
+  //           headers: {
+  //               "Content-Type": "application/json",
+  //           },
+  //       })
+  //       .then(response => {
+  //           if (!response.ok) {
+  //               alert("Failed to download file");
+  //               throw new Error("Failed to download file");
+  //           }
+  //           console.log(response.headers)
+  //           return response.blob();
+  //       })
+  //       .then(blob => {
+  //         console.log(blob)
+  //           // Convert response to Blob
+  //           const blobUrl = URL.createObjectURL(blob);
+
+  //           let parent = downloadButton.parentNode;
+
+  //           // Create a downloadable link
+  //           const downloadLink = document.createElement('a');
+  //           downloadLink.href = blobUrl;
+  //           downloadLink.click();
+
+  //           // set the wrapper as child (instead of the element)
+  //           parent.replaceChild(downloadLink, downloadButton);
+  //           // set element as child of wrapper
+  //           downloadLink.appendChild(downloadButton);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error downloading CSV:', error)
+  //       });
+  // }, []);
+
   const handleStartAssessment = (id, consent) => {
     document.getElementById("consentText").textContent = consent; // uses passed on consent text to show on modal
     document
@@ -42,9 +81,53 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
     document.getElementById("start-assessment-modal").showModal();
   };
 
-  const handleDownloadCSV = (id) => {
-    console.log(id);
-    // make get request to download csv with results
+  const handleDownloadAssessment = async(id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/response/download/${id}`,{
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+
+      if (response.ok) {
+        // Get the content disposition from the response headers
+        const contentDisposition = response.headers.get('content-disposition');
+        
+        // Extracting the filename from the content disposition header
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        let filename = 'downloaded_assessments_file.csv';
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+        console.log(filename)
+
+        // Create a blob from the response data
+        const blob = await response.blob();
+        console.log(blob)
+
+        // Create a temporary URL to the blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and click it to initiate the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up: remove the link and revoke the URL object
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else if(response.status == 400){
+        alert("No responses found for this assessment.");
+      } else {
+        console.error('File download failed:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
   };
 
   return (
@@ -56,13 +139,14 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
       </td>
       <td className="flex flex-row justify-around">
         <svg
+          id={'downloadCSV_' + id}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
           className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200"
-          onClick={() => handleDownloadCSV(id)}
+          onClick={() => handleDownloadAssessment(id)}
         >
           <path
             strokeLinecap="round"
@@ -90,15 +174,15 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
   );
 };
 
-const ParticipantRow = ({ id, name, status, completedOn }) => {
-    return (
-        <tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
-            <td>{ id }</td>
-            <td>{ name }</td>
-            <td><span className={status == 'completed' ? "badge badge-ghost bg-green-300 rounded-md" : "badge badge-ghost bg-yellow-300 rounded-md" }>{ status.charAt(0).toUpperCase() + status.substring(1) }</span></td>
-            <td className=''>{ formatDate(completedOn) } </td>
-        </tr>
-    )
+const ParticipantRow = ({ patientID, assessmentName, createdOn }) => {
+  return (
+    <tr className="bg-white text-stone-900 hover:bg-stone-50">
+      <td>{ patientID }</td>
+      <td>{ assessmentName }</td>
+      <td><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
+      <td className=''>{ formatDate(new Date(createdOn)) } </td>
+    </tr>
+  )
 }
 
 const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID }) => {
@@ -142,12 +226,12 @@ const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID
 }
 
 const Table = ({ page, data }) => {
-    const tableHeaders = {
-        "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
-        "assessments": ["Assessment Name", "Assessment Description", "Created On"],
-        "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
-        "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
-    };
+  const tableHeaders = {
+    "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
+    "assessments": ["Assessment Name", "Assessment Description", "Created On"],
+    "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
+    "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
+  };
 
   const router = useRouter();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -215,22 +299,22 @@ const Table = ({ page, data }) => {
                 </thead>
                 <tbody>
                     {
-                        page == 'dashboard' && data.length > 0 && data.map((row) => {
+                        page == 'dashboard' && data !== undefined && data.length > 0 && data.map((row) => {
                             return <DashboardRow key={row.id} id={row.id} name={row.name} status={row.status} completedOn={row.completedOn} />
                         })
                     }
                     {
-                        page == 'assessments' && data.length > 0 && data.map((row, index) => {
+                        page == 'assessments' && data !== undefined && data.length > 0 && data.map((row, index) => {
                             return <AssessmentRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} consentText={row.consent_text} />
                         })
                     }
                     {
-                        page == 'participants' && data.length > 0 && data.map((row) => {
-                            return <ParticipantRow key={row.participantID} id={row.participantID} name={row.assessmentName} status={row.status} completedOn={row.completedOn} />
+                        page == 'participants' && data !== undefined && data.length > 0 && data.map((row, index) => {
+                            return <ParticipantRow key={index} patientID={row.patient_id} assessmentName={row.assessment_name} createdOn={row.created_on} />
                         })
                     }
                     {
-                        page == 'surveys' && data.length > 0 && data.map((row, index) => {
+                        page == 'surveys' && data !== undefined && data.length > 0 && data.map((row, index) => {
                             return <SurveyRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} totalNumOfQ={row.questions.length} researcherID={row.researcherId} />
                         })
                     }
