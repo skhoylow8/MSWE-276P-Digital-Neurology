@@ -17,7 +17,7 @@ export default function isAuth(Component) {
 
 
     useEffect(() => {
-      if ((!auth || auth === null) && isLoggedIn) {
+      if ((!auth || auth === null) && isLoggedIn) { // if not authenticated but logged in
         // Call logout endpoint and clear cookies
         fetch("http://localhost:8000/logout", {
             method: "POST",
