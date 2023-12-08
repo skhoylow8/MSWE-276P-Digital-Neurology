@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,45 @@ const DashboardRow = ({ id, name, status, completedOn }) => {
 };
 
 const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
+  // useEffect(() => {
+  //   const downloadButton = document.getElementById('downloadCSV_' + id);
+
+  //   fetch(`http://localhost:8000/response/download/${id}`, {
+  //           method: "GET",
+  //           headers: {
+  //               "Content-Type": "application/json",
+  //           },
+  //       })
+  //       .then(response => {
+  //           if (!response.ok) {
+  //               alert("Failed to download file");
+  //               throw new Error("Failed to download file");
+  //           }
+  //           console.log(response.headers)
+  //           return response.blob();
+  //       })
+  //       .then(blob => {
+  //         console.log(blob)
+  //           // Convert response to Blob
+  //           const blobUrl = URL.createObjectURL(blob);
+
+  //           let parent = downloadButton.parentNode;
+
+  //           // Create a downloadable link
+  //           const downloadLink = document.createElement('a');
+  //           downloadLink.href = blobUrl;
+  //           downloadLink.click();
+
+  //           // set the wrapper as child (instead of the element)
+  //           parent.replaceChild(downloadLink, downloadButton);
+  //           // set element as child of wrapper
+  //           downloadLink.appendChild(downloadButton);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error downloading CSV:', error)
+  //       });
+  // }, []);
+
   const handleStartAssessment = (id, consent) => {
     document.getElementById("consentText").textContent = consent; // uses passed on consent text to show on modal
     document
@@ -41,9 +80,53 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
     document.getElementById("start-assessment-modal").showModal();
   };
 
-  const handleDownloadCSV = (id) => {
-    console.log(id);
-    // make get request to download csv with results
+  const handleDownloadAssessment = async(id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/response/download/${id}`,{
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+
+      if (response.ok) {
+        // Get the content disposition from the response headers
+        const contentDisposition = response.headers.get('content-disposition');
+        
+        // Extracting the filename from the content disposition header
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        let filename = 'downloaded_assessments_file.csv';
+        if (matches != null && matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+        console.log(filename)
+
+        // Create a blob from the response data
+        const blob = await response.blob();
+        console.log(blob)
+
+        // Create a temporary URL to the blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and click it to initiate the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up: remove the link and revoke the URL object
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else if(response.status == 400){
+        alert("No responses found for this assessment.");
+      } else {
+        console.error('File download failed:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
   };
 
   return (
@@ -55,13 +138,14 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
       </td>
       <td className="flex flex-row justify-around">
         <svg
+          id={'downloadCSV_' + id}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
           className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200"
-          onClick={() => handleDownloadCSV(id)}
+          onClick={() => handleDownloadAssessment(id)}
         >
           <path
             strokeLinecap="round"

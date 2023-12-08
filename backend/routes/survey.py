@@ -9,6 +9,7 @@ survey_router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 @survey_router.post("/", response_description="Add new survey")
 async def create_survey(request: Request, survey: Survey = Body(...)):
     survey = jsonable_encoder(survey)
@@ -34,14 +35,6 @@ async def get_survey(id: str, request: Request):
     return HTTPException(status_code=404, detail=f"Survey {id} not found")
 
 
-@survey_router.get("/{id}", response_description="Get a single survey")
-async def get_survey(id: str, request: Request):
-    if (survey := await request.app.mongodb["Survey"].find_one({"_id":id})) is not None:
-        return survey
-
-    return HTTPException(status_code=404, detail=f"Survey {id} not found")
-
-
 @survey_router.put("/{id}", response_description="Update Survey")
 async def update_survey(request: Request, id: str, surveyReq: Survey = Body(...)):
     surveyReq = jsonable_encoder(surveyReq)
@@ -55,9 +48,3 @@ async def update_survey(request: Request, id: str, surveyReq: Survey = Body(...)
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_survey)
 
     return HTTPException(status_code=404, detail=f"Survey {id} not found")
-
-
-
-
-
-#  delete => do we need?
