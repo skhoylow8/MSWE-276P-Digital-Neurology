@@ -174,10 +174,10 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
   );
 };
 
-const ParticipantRow = ({ patientID, assessmentName, createdOn }) => {
+const ParticipantRow = ({ patientName, assessmentName, createdOn }) => {
   return (
     <tr className="bg-white text-stone-900 hover:bg-stone-50">
-      <td>{ patientID }</td>
+      <td>{ patientName }</td>
       <td>{ assessmentName }</td>
       <td><span className="badge badge-ghost bg-green-300 rounded-md">Completed</span></td>
       <td className=''>{ formatDate(new Date(createdOn)) } </td>
@@ -227,9 +227,9 @@ const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID
 
 const Table = ({ page, data }) => {
   const tableHeaders = {
-    "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
+    "dashboard": ["Participant Name", "Assessment Name", "Status", "Completed On"],
     "assessments": ["Assessment Name", "Assessment Description", "Created On"],
-    "participants": ["Participant ID", "Assessment Assigned", "Status", "Completed On"],
+    "participants": ["Participant Name", "Assessment Assigned", "Status", "Completed On"],
     "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
   };
 
@@ -310,7 +310,7 @@ const Table = ({ page, data }) => {
                     }
                     {
                         page == 'participants' && data !== undefined && data.length > 0 && data.map((row, index) => {
-                            return <ParticipantRow key={index} patientID={row.patient_id} assessmentName={row.assessment_name} createdOn={row.created_on} />
+                            return <ParticipantRow key={index} patientName={row.participant_first_name + " " + row.participant_last_name} assessmentName={row.assessment_name} createdOn={row.created_on} />
                         })
                     }
                     {
