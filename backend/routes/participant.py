@@ -50,8 +50,10 @@ async def list_participants(request: Request, user: Annotated[Future, Depends(ge
     responses = []
     for assessment_response in assessment_responses:
         assessment = await request.app.mongodb["Assessment"].find_one({"_id": assessment_response["assessment_id"]})
+        participant =  await request.app.mongodb["Participant"].find_one({"_id": assessment_response["patient_id"]})
         response = {
-            "patient_id": assessment_response.get('patient_id'),
+            "participant_first_name": participant.get('first_name'),
+             "participant_last_name": participant.get('first_name'),
             "assessment_name": assessment.get('name'),
             "created_on": assessment_response.get('created_on')
         }
