@@ -10,6 +10,12 @@ import CheckBox from '@/app/components/questionTypes/CheckBox';
 import isAuth from '@/app/components/isAuth';
 import Cookies from 'universal-cookie';
 
+/**
+ * CreateSurvey - A component for creating surveys.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the CreateSurvey component.
+ */
 const CreateSurvey = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -20,10 +26,20 @@ const CreateSurvey = () => {
     const [questionType, setQuestionType] = useState('mc');
     const [questions, setQuestions] = useState([]);
 
+    /**
+     * Handles changes in the question type.
+     *
+     * @param {string} newState - The new question type.
+     */
     const handleStateChange = (newState) => {
         setQuestionType(newState);
     };
 
+    /**
+     * Handles the addition of a new question.
+     *
+     * @param {Event} e - The event object.
+     */
     const handleAddQuestion = (e) => {
         e.preventDefault()
         const question = e.target.elements.questionTitle.value;
@@ -38,6 +54,11 @@ const CreateSurvey = () => {
         document.getElementById('add-question-modal').close();
     }
 
+    /**
+     * Handles the editing of an existing question.
+     *
+     * @param {Event} e - The event object.
+     */
     const handleEditQuestion = (e) => {
         e.preventDefault()
         const question = e.target.elements.editQuestionTitle.value;
@@ -55,6 +76,7 @@ const CreateSurvey = () => {
         document.getElementById('edit-question-modal').close();
     }
 
+    // Function to handle creating a survey
     const handleCreateSurvey = async () => {
         const cookies = new Cookies();
         const researcherID = cookies.get('researcherID').toString();

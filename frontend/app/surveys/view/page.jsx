@@ -9,6 +9,12 @@ import Rating from '@/app/components/questionTypes/Rating';
 import CheckBox from '@/app/components/questionTypes/CheckBox';
 import isAuth from '@/app/components/isAuth';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
@@ -24,10 +30,16 @@ const fetcher = async (url) => {
     return await response.json();
 }
 
+/**
+ * ViewSurvey component for displaying details of a survey.
+ *
+ * @returns {JSX.Element} - The JSX element representing the ViewSurvey component.
+ */
 const ViewSurvey = () => {
     const searchParams = useSearchParams();
     const surveyID = searchParams.get('data')
 
+    // Fetch survey data using useSWR hook
     const { data, error, isLoading } = useSWR(`http://localhost:8000/survey/${surveyID}`, fetcher)
 
     return (

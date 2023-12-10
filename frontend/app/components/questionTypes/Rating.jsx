@@ -1,6 +1,17 @@
 import React from 'react';
 import { Label, Slider } from '@qualtrics/ui-react';
 
+/**
+ * Rating - A component for collecting user ratings for a given question.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.question - The text of the question to be displayed.
+ * @param {string} props.mode - The mode of the rating component (e.g., 'edit').
+ * @param {number} props.i - The index or identifier of the rating component.
+ * @param {function} props.onStateChange - A callback function to be called when the rating state changes.
+ * @returns {JSX.Element} - JSX element representing the Rating component.
+ */
 const Rating = ({ question, mode, i, onStateChange }) => {
     const min = parseInt(question.choices[0]);
     const max = parseInt(question.choices[1]);

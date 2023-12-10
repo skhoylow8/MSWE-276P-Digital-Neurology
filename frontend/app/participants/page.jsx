@@ -7,6 +7,12 @@ import NavBar from '@/app/components/NavBar';
 import Cookies from 'universal-cookie';
 import isAuth from '@/app/components/isAuth';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
@@ -22,7 +28,18 @@ const fetcher = async (url) => {
     return await response.json();
 }
 
+/**
+ * Participant - A component representing the participants page.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} - JSX element representing the Participant component.
+ */
 const Participant = (props) => {
+    /**
+     * SWR hook to fetch participant data.
+     * @type {Object}
+     */
     const { data, error, isLoading } = useSWR('http://localhost:8000/participant/', fetcher);
 
     return (

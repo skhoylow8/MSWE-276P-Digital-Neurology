@@ -7,6 +7,12 @@ import isAuth from '@/app/components/isAuth';
 import Cookies from 'universal-cookie';
 import { FullScreenTakeover } from '@qualtrics/ui-react';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
     // get survey questions using id
     const response = await fetch(url, {
@@ -27,6 +33,12 @@ const fetcher = async (url) => {
     return formatedData;
 }
 
+/**
+ * Formats the JSON data to be used by the SurveyComponent, which uses the SurveyJS library.
+ *
+ * @param {Object} data - The JSON data to be formatted.
+ * @returns {Object} - Formatted JSON data for the survey.
+ */
 const formatQuestions = (data) => {
     console.log(data);
     let pages = []
@@ -63,6 +75,12 @@ const formatQuestions = (data) => {
     };
 }
 
+/**
+ * Builds the StartAssessment component for the Start Assessment page.
+ *
+ * @function
+ * @returns {JSX.Element} - JSX element representing the StartAssessment component.
+ */
 const StartAssessment = () => {
     const searchParams = useSearchParams();
     const cookies = new Cookies();

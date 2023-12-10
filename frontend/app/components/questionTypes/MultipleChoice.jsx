@@ -2,12 +2,31 @@
 import React, { useState } from 'react';
 import { RadioGroup, RadioOption } from '@qualtrics/ui-react';
 
+/**
+ * MultipleChoice - A component for collecting user responses to a multiple-choice question.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.question - The text of the multiple-choice question.
+ * @param {string} props.mode - The mode of the multiple-choice component (e.g., 'edit').
+ * @param {number} props.i - The index or identifier of the multiple-choice component.
+ * @param {function} props.onStateChange - A callback function to be called when the state of choices changes.
+ * @returns {JSX.Element} - JSX element representing the MultipleChoice component.
+ */
 const MultipleChoice = ({ question, mode, i, onStateChange }) => {
     const [value, setValue] = useState();
+
+    /**
+     * Sets the value of the radio button
+     * @param {event} event 
+     */
     function handleChange(event) {
       setValue(event.target.value);
     }
 
+    /**
+     * This function is called when the edit button is clicked and opens the edit question modal
+     */
     const handleEditQuestion = () => {
         document.getElementById('editQuestionTitle').value = question.text;
         document.getElementById('editQuestionChoices').value = question.choices.join(',');

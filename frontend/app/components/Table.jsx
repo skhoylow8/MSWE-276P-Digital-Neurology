@@ -4,6 +4,12 @@ import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
 import { useRouter, redirect } from "next/navigation";
 import Cookies from "universal-cookie";
 
+/**
+ * Formats a Date Object into a readable date string.
+ *
+ * @param {Date} date - The Date object to be formatted.
+ * @returns {string} - The formatted date string.
+ */
 const formatDate = (date) => {
   return date.toLocaleDateString("en-US", {
     year: "numeric",
@@ -12,6 +18,17 @@ const formatDate = (date) => {
   });
 };
 
+/**
+ * DashboardRow - A component representing a row in the dashboard table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the dashboard entry.
+ * @param {string} props.name - The name of the dashboard entry.
+ * @param {string} props.status - The status of the dashboard entry (e.g., "completed", "incomplete").
+ * @param {string} props.completedOn - The date when the dashboard entry was completed.
+ * @returns {JSX.Element} JSX element representing the dashboard row.
+ */
 const DashboardRow = ({ id, name, status, completedOn }) => {
   return (
     <tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
@@ -33,46 +50,24 @@ const DashboardRow = ({ id, name, status, completedOn }) => {
   );
 };
 
+/**
+ * AssessmentRow - A component representing a row in the assessment table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the assessment.
+ * @param {string} props.name - The name of the assessment.
+ * @param {string} props.description - The description of the assessment.
+ * @param {string} props.createdOn - The date when the assessment was created.
+ * @param {string} props.consentText - The text describing the consent for the assessment.
+ * @returns {JSX.Element} JSX element representing the assessment row.
+ */
 const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
-  // useEffect(() => {
-  //   const downloadButton = document.getElementById('downloadCSV_' + id);
-
-  //   fetch(`http://localhost:8000/response/download/${id}`, {
-  //           method: "GET",
-  //           headers: {
-  //               "Content-Type": "application/json",
-  //           },
-  //       })
-  //       .then(response => {
-  //           if (!response.ok) {
-  //               alert("Failed to download file");
-  //               throw new Error("Failed to download file");
-  //           }
-  //           console.log(response.headers)
-  //           return response.blob();
-  //       })
-  //       .then(blob => {
-  //         console.log(blob)
-  //           // Convert response to Blob
-  //           const blobUrl = URL.createObjectURL(blob);
-
-  //           let parent = downloadButton.parentNode;
-
-  //           // Create a downloadable link
-  //           const downloadLink = document.createElement('a');
-  //           downloadLink.href = blobUrl;
-  //           downloadLink.click();
-
-  //           // set the wrapper as child (instead of the element)
-  //           parent.replaceChild(downloadLink, downloadButton);
-  //           // set element as child of wrapper
-  //           downloadLink.appendChild(downloadButton);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error downloading CSV:', error)
-  //       });
-  // }, []);
-
+  /**
+   * Displays the modal to start an assessment
+   * @param {string} id 
+   * @param {string} consent 
+   */
   const handleStartAssessment = (id, consent) => {
     document.getElementById("consentText").textContent = consent; // uses passed on consent text to show on modal
     document
@@ -81,6 +76,10 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
     document.getElementById("start-assessment-modal").showModal();
   };
 
+  /**
+   * Handles the download of the assessment responses
+   * @param {string} id 
+   */
   const handleDownloadAssessment = async(id) => {
     try {
       const response = await fetch(`http://localhost:8000/response/download/${id}`,{
@@ -174,6 +173,16 @@ const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
   );
 };
 
+/**
+ * ParticipantRow - A component representing a row in the participant table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.patientID - The ID of the participant.
+ * @param {string} props.assessmentName - The name of the associated assessment.
+ * @param {string} props.createdOn - The date when the participant entry was created.
+ * @returns {JSX.Element} JSX element representing the participant row.
+ */
 const ParticipantRow = ({ patientID, assessmentName, createdOn }) => {
   return (
     <tr className="bg-white text-stone-900 hover:bg-stone-50">
@@ -185,6 +194,19 @@ const ParticipantRow = ({ patientID, assessmentName, createdOn }) => {
   )
 }
 
+/**
+ * SurveyRow - A component representing a row in the survey table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the survey.
+ * @param {string} props.name - The name of the survey.
+ * @param {string} props.description - The description of the survey.
+ * @param {string} props.createdOn - The date when the survey entry was created.
+ * @param {number} props.totalNumOfQ - The total number of questions in the survey.
+ * @param {string} props.researcherID - The ID of the researcher associated with the survey.
+ * @returns {JSX.Element} JSX element representing the survey row.
+ */
 const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID }) => {
     const router = useRouter();
     const cookies = new Cookies(); 
@@ -225,6 +247,15 @@ const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID
     )
 }
 
+/**
+ * Table - A component representing a table to display data in a tabular format.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {number} props.page - The current page number of the table.
+ * @param {Array} props.data - The array of data to be displayed in the table.
+ * @returns {JSX.Element} - JSX element representing the Table component.
+ */
 const Table = ({ page, data }) => {
   const tableHeaders = {
     "dashboard": ["Participant ID", "Assessment Name", "Status", "Completed On"],
@@ -236,6 +267,11 @@ const Table = ({ page, data }) => {
   const router = useRouter();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  /**
+   * Validates the input recieved and creates a patient in the database. Then starts the assessment.
+   * @param {event} e 
+   * @returns null
+   */
   const handleStartAssessment = async (e) => {
     e.preventDefault();
     setIsButtonDisabled(true);

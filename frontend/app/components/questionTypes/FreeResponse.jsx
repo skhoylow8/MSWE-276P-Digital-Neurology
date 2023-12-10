@@ -1,6 +1,20 @@
 import React from 'react'
 
+/**
+ * FreeResponse - A component for collecting free-text responses to a given question.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.question - The text of the free-response question.
+ * @param {string} props.mode - The mode of the free-response component (e.g., 'edit').
+ * @param {number} props.i - The index or identifier of the free-response component.
+ * @param {function} props.onStateChange - A callback function to be called when the state of the response changes.
+ * @returns {JSX.Element} - JSX element representing the FreeResponse component.
+ */
 const FreeResponse = ({ question, mode, i, onStateChange }) => {
+  /**
+   * This function is called when the edit button is clicked and opens the edit question modal
+   */
   const handleEditQuestion = () => {
     document.getElementById('editQuestionTitle').value = question.text;
     document.getElementById('editQuestionChoices').value = question.choices.join(',');

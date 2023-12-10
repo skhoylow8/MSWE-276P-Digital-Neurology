@@ -3,6 +3,10 @@
 import React from 'react';
 import { FormField, RadioGroup, RadioOption } from '@qualtrics/ui-react';
 
+/**
+ * Builds the ConsentQuestion Component for the ConsentQuestion type
+ * @returns ConsentQuestion component
+ */
 const ConsentQuestion = () => {
   return (
     <FormField

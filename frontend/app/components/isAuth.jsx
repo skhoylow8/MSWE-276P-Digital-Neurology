@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
+/**
+ * Takes in a component and returns that component if the user is authenticated
+ * @param {JSX.Element} Component 
+ * @returns 
+ */
 export default function isAuth(Component) {
+  /**
+   * Checks if the user is authenticated
+   */
   return function IsAuth(props) {
     const cookies = new Cookies();
     const router = useRouter();
@@ -42,7 +50,7 @@ export default function isAuth(Component) {
           }).finally(() => {
             router.push("/");
           });
-      } else if ((!auth || auth === null) && !isLoggedIn) {
+      } else if ((!auth || auth === null) && !isLoggedIn) { // if not authenticated and not logged in redirect to login page
         router.push("/");
       }
     }, []);

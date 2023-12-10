@@ -4,18 +4,42 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
-export const Login = (props) => {
+/**
+ * Login - A component for user login.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the Login component.
+ */
+export const Login = () => {
   const router = useRouter();
   const [isButtonDisabled , setIsButtonDisabled] = useState(false);
 
+  /**
+   * Checks if the provided string is a valid password.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid password.
+   */
   const validPassword = (string) => {
       return /^[\w\-.]{1,127}$/.test(string);
   };
 
+  /**
+   * Checks if the provided string is a valid email.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid email.
+   */
   const validEmail = (string) => {
       return /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(string);
   }
 
+  /**
+   * Encodes JSON data into form data for the POST request.
+   *
+   * @param {Object} data - The JSON data to be encoded.
+   * @returns {string} - The encoded form data string.
+   */
   const encodeFormData = (data)=>{
       const formBody = new URLSearchParams();
       
@@ -26,6 +50,12 @@ export const Login = (props) => {
       return formBody.toString();
   }
 
+  /**
+   * Logs in the user if valid information is entered.
+   *
+   * @param {Event} e - The submit event.
+   * @returns {void}
+   */
   const handleSubmit = async (e) => {
       e.preventDefault();
       setIsButtonDisabled(true);

@@ -4,22 +4,52 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Cookies from "universal-cookie";
 
-export const Register = (props) => {
+/**
+ * Register - A component for user registration.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the Register component.
+ */
+export const Register = () => {
   const router = useRouter();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+  /**
+   * Checks if the provided string is a valid name.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid name.
+   */
   const validName = (string) => {
     return /^[A-Za-z]+$/.test(string); 
   };
 
+  /**
+   * Checks if the provided string is a valid password.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid password.
+   */
   const validPassword = (string) => {
     return /^[\w\-.]{1,127}$/.test(string);
   };
 
+  /**
+   * Checks if the provided string is a valid email.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid email.
+   */
   const validEmail = (string) => {
     return /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(string);
   };
 
+  /**
+   * Handles the form submission for user registration.
+   *
+   * @param {Event} e - The submit event.
+   * @returns {void}
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsButtonDisabled(true);
