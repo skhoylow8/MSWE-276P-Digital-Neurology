@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/NavBar.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/NavBar.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use client';
+import React from 'react';
+import Link from 'next/link';
+import { redirect, useRouter } from 'next/navigation';
+import Cookies from 'universal-cookie';
+
+/**
+ * NavBar - A component representing the navigation bar.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} [props.page] - The proper page highlighted in the navigation bar.
+ * @returns {JSX.Element} - JSX element representing the NavBar component.
+ */
+const NavBar = (props) => {
+    const router = useRouter();
+    const cookies = new Cookies();
+
+    /**
+     * Handles logging out the user on both the frontend and backend
+     * @param {Event} e 
+     */
+    const handleLogout = async (e) =>{
+        e.preventDefault();
+        try {
+            // Call logout endpoint and clear cookies
+            const res = await fetch("http://localhost:8000/logout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        
+            if (res.status === 200) {
+                // Successful logout
+                cookies.set("authenticated", false, { path: '/' });
+                cookies.set("loggedIn", false, { path: "/" });
+                cookies.set("researcherID", null, { path: '/' });
+                cookies.set("firstName", null, { path: '/' });
+                cookies.set("email", null, { path: '/' });
+                
+                router.push("/"); 
+            } else {
+                // Failed logout
+                throw new Error("Failed to logout");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    return (
+        &lt;nav className="bg-gray-800">
+            &lt;div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                &lt;div className="flex h-16 items-center justify-between">
+                    &lt;div className="flex items-center absolute left-0 pl-5">
+                        &lt;div className="flex-shrink-0">
+                            &lt;img className="h-10" src="/images/digital-neurology-logo.png" alt="Digital Neurology" />
+                        &lt;/div>
+                        &lt;div className="hidden md:block">
+                            &lt;div className="ml-10 flex items-baseline space-x-4">
+                                {/* &lt;!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
+                                {/* &lt;Link href="/dashboard" className={props.page=="dashboard"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"} aria-current="page">Dashboard&lt;/Link> */}
+                                &lt;Link href="/assessments" className={props.page=="assessments"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Assessments&lt;/Link>
+                                &lt;Link href="/participants" className={props.page=="participants"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Participants&lt;/Link>
+                                &lt;Link href="/surveys" className={props.page=="surveys"?"bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium": "text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"}>Surveys&lt;/Link>
+                            &lt;/div>
+                        &lt;/div>
+                    &lt;/div>
+                    &lt;div className="hidden md:block absolute right-0 pr-5">
+                        &lt;div className="ml-4 flex items-center md:ml-6">
+                            {/* &lt;!-- Profile dropdown --> */}
+                            &lt;details className="dropdown relative ml-3">
+                                &lt;summary className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    {/* &lt;img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=2&amp;w=256&amp;h=256&amp;q=80" alt="" /> */}
+                                    &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-white">
+                                        &lt;path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    &lt;/svg>
+                                &lt;/summary>
+
+                                {/* &lt;!--
+                                    Dropdown menu, show/hide based on menu state.
+
+                                    Entering: "transition ease-out duration-100"
+                                    From: "transform opacity-0 scale-95"
+                                    To: "transform opacity-100 scale-100"
+                                    Leaving: "transition ease-in duration-75"
+                                    From: "transform opacity-100 scale-100"
+                                    To: "transform opacity-0 scale-95"
+                                --> */}
+                                &lt;ul className="menu dropdown-content absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" aria-hidden="true" tabIndex="-1">
+                                    {/* &lt;!-- Active: "bg-gray-100", Not Active: "" --> */}
+                                    {/* &lt;a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-0">Your Profile&lt;/a>
+                                    &lt;a href="#" className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-1">Settings&lt;/a> */}
+                                    &lt;a href="#" onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabIndex="-1" id="user-menu-item-2">Sign out&lt;/a>
+                                &lt;/ul>
+                            &lt;/details>
+                        &lt;/div>
+                    &lt;/div>
+
+                    {/* &lt;!-- Mobile menu --> */}
+                    &lt;details className="dropdown md:dropdown-end md:hidden">
+                        &lt;summary className="relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white" aria-controls="mobile-menu" aria-expanded="false">
+                            &lt;svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+                                &lt;path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            &lt;/svg>
+                        &lt;/summary>
+                        &lt;ul id="mobile-menu" className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                            &lt;div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                                {/* &lt;!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
+                                {/* &lt;Link href="/dashboard" className={props.page=="dashboard" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"} aria-current="page">Dashboard&lt;/Link> */}
+                                &lt;Link href="/assessments" className={props.page=="assessments" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Assessments&lt;/Link>
+                                &lt;Link href="/participants" className={props.page=="participants" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Participants&lt;/Link>
+                                &lt;Link href="/surveys" className={props.page=="surveys" ? "bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" : "text-gray-500 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"}>Surveys&lt;/Link>
+                            &lt;/div>
+                            &lt;div className="border-t border-gray-700 pb-3 pt-4">
+                                &lt;div className="flex flex-col px-5">
+                                    &lt;div className="text-base font-medium leading-none text-gray-400 py-1">{window.localStorage.getItem("firstName")}&lt;/div>
+                                    &lt;div className="text-sm font-medium leading-none text-gray-400">{window.localStorage.getItem("email")}&lt;/div>
+                                &lt;/div>
+                                &lt;div className="mt-3 space-y-1 px-2">
+                                    &lt;a href="#" onClick={handleLogout} className="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-700 hover:text-white">Sign out&lt;/a>
+                                &lt;/div>
+                            &lt;/div>
+                        &lt;/ul>
+                    &lt;/details>
+                &lt;/div>
+            &lt;/div>
+        &lt;/nav>
+    )
+}
+
+export default NavBar</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AssessmentRow">AssessmentRow</a></li><li><a href="global.html#Assessments">Assessments</a></li><li><a href="global.html#CheckBox">CheckBox</a></li><li><a href="global.html#ConsentQuestion">ConsentQuestion</a></li><li><a href="global.html#CreateSurvey">CreateSurvey</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#DashboardRow">DashboardRow</a></li><li><a href="global.html#DuplicateSurvey">DuplicateSurvey</a></li><li><a href="global.html#EditSurvey">EditSurvey</a></li><li><a href="global.html#FreeResponse">FreeResponse</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#MultipleChoice">MultipleChoice</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Participant">Participant</a></li><li><a href="global.html#ParticipantRow">ParticipantRow</a></li><li><a href="global.html#Rating">Rating</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#StartAssessment">StartAssessment</a></li><li><a href="global.html#SurveyComponent">SurveyComponent</a></li><li><a href="global.html#SurveyRow">SurveyRow</a></li><li><a href="global.html#Surveys">Surveys</a></li><li><a href="global.html#Table">Table</a></li><li><a href="global.html#ViewSurvey">ViewSurvey</a></li><li><a href="global.html#fetcher">fetcher</a></li><li><a href="global.html#formatDate">formatDate</a></li><li><a href="global.html#formatQuestions">formatQuestions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Dec 09 2023 19:01:21 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

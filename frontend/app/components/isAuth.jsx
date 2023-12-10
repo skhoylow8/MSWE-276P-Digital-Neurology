@@ -4,13 +4,18 @@ import { redirect, useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
 /**
- * Takes in a component and returns that component if the user is authenticated
- * @param {JSX.Element} Component 
- * @returns 
+ * A higher-order component (HOC) that wraps a component and ensures authentication.
+ *
+ * @param {JSX.Element} Component - The React component to be wrapped.
+ * @returns {Function} - A function that, when called, returns the wrapped component.
  */
 export default function isAuth(Component) {
   /**
-   * Checks if the user is authenticated
+   * Wrapped component that ensures authentication before rendering.
+   *
+   * @component
+   * @param {Object} props - The props passed to the wrapped component.
+   * @returns {JSX.Element|null} - Returns the wrapped component if authenticated, otherwise null.
    */
   return function IsAuth(props) {
     const cookies = new Cookies();

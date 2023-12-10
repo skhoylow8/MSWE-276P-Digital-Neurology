@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/questionTypes/Rating.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/questionTypes/Rating.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { Label, Slider } from '@qualtrics/ui-react';
+
+/**
+ * Rating - A component for collecting user ratings for a given question.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.question - The text of the question to be displayed.
+ * @param {string} props.mode - The mode of the rating component (e.g., 'edit').
+ * @param {number} props.i - The index or identifier of the rating component.
+ * @param {function} props.onStateChange - A callback function to be called when the rating state changes.
+ * @returns {JSX.Element} - JSX element representing the Rating component.
+ */
+const Rating = ({ question, mode, i, onStateChange }) => {
+    const min = parseInt(question.choices[0]);
+    const max = parseInt(question.choices[1]);
+
+    const handleEditQuestion = () => {
+        document.getElementById('editQuestionTitle').value = question.text;
+        document.getElementById('editQuestionChoices').value = question.choices.join(',');
+        document.getElementById('editQuestionType').value = question.type;
+        onStateChange(question.type);
+        document.getElementById('editQuestionIndex').value = i;
+
+        document.getElementById('edit-question-modal').showModal()
+    }
+
+    return (
+        &lt;div className='border-b-2 border-stone-200 rounded-sm p-4'>
+            &lt;div className='flex flex-row justify-between'>
+                &lt;label>{question.text}&lt;/label>
+                {
+                    mode == 'edit' &amp;&amp; 
+                    &lt;button className="flex items-center cursor-pointer hover:bg-stone-200 hover:shadow hover:rounded-full" onClick={handleEditQuestion}>
+                        &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 hover:shadow">
+                            &lt;path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                        &lt;/svg>
+                    &lt;/button>
+                }
+            &lt;/div>
+            &lt;Label
+                style={{ display: "flex", flexDirection: "column", margin: 10 }}
+                id="default"
+            >
+                &lt;Slider aria-labelledby="default" min={min} max={max} />
+            &lt;/Label>
+        &lt;/div>
+    )
+}
+
+export default Rating</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AssessmentRow">AssessmentRow</a></li><li><a href="global.html#Assessments">Assessments</a></li><li><a href="global.html#CheckBox">CheckBox</a></li><li><a href="global.html#ConsentQuestion">ConsentQuestion</a></li><li><a href="global.html#CreateSurvey">CreateSurvey</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#DashboardRow">DashboardRow</a></li><li><a href="global.html#DuplicateSurvey">DuplicateSurvey</a></li><li><a href="global.html#EditSurvey">EditSurvey</a></li><li><a href="global.html#FreeResponse">FreeResponse</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#MultipleChoice">MultipleChoice</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Participant">Participant</a></li><li><a href="global.html#ParticipantRow">ParticipantRow</a></li><li><a href="global.html#Rating">Rating</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#StartAssessment">StartAssessment</a></li><li><a href="global.html#SurveyComponent">SurveyComponent</a></li><li><a href="global.html#SurveyRow">SurveyRow</a></li><li><a href="global.html#Surveys">Surveys</a></li><li><a href="global.html#Table">Table</a></li><li><a href="global.html#ViewSurvey">ViewSurvey</a></li><li><a href="global.html#fetcher">fetcher</a></li><li><a href="global.html#formatDate">formatDate</a></li><li><a href="global.html#formatQuestions">formatQuestions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Dec 09 2023 19:01:21 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
