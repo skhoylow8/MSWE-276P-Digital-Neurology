@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: auth/register/page.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: auth/register/page.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Cookies from "universal-cookie";
+
+/**
+ * Register - A component for user registration.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the Register component.
+ */
+export const Register = () => {
+  const router = useRouter();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  /**
+   * Checks if the provided string is a valid name.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid name.
+   */
+  const validName = (string) => {
+    return /^[A-Za-z]+$/.test(string); 
+  };
+
+  /**
+   * Checks if the provided string is a valid password.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid password.
+   */
+  const validPassword = (string) => {
+    return /^[\w\-.]{1,127}$/.test(string);
+  };
+
+  /**
+   * Checks if the provided string is a valid email.
+   *
+   * @param {string} string - The string to be validated.
+   * @returns {boolean} - Whether the string is a valid email.
+   */
+  const validEmail = (string) => {
+    return /^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(string);
+  };
+
+  /**
+   * Handles the form submission for user registration.
+   *
+   * @param {Event} e - The submit event.
+   * @returns {void}
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsButtonDisabled(true);
+
+    const firstName = e.target.elements.firstName.value;
+    const lastName = e.target.elements.lastName.value;
+    const email = e.target.elements.email.value; 
+    const confirmEmail = e.target.elements.confirmEmail.value;
+    const password = e.target.elements.password.value;
+    const confirmPassword = e.target.elements.confirmPassword.value;
+
+    if(!(validName(firstName) &amp;&amp; validName(lastName) &amp;&amp; validPassword(password) &amp;&amp; validEmail(email) &amp;&amp; validEmail(confirmEmail))){
+        alert("The information entered is invalid.");
+        return;
+    }
+
+    if(password == confirmPassword &amp;&amp; email == confirmEmail){
+      try {
+        const response = await fetch('http://localhost:8000/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              "first_name": firstName,
+              "last_name": lastName,
+              "email": email,
+              "confirm_email": confirmEmail,
+              "password": password,
+              "confirm_password": confirmPassword
+            }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail);
+        } 
+
+        const result = await response.json();
+        
+        const researcherID = result.researcher_id
+        const firstNameRes = result.researcher_name
+        const emailRes = result.researcher_email
+
+        const cookies = new Cookies();
+        cookies.set("authenticated", true, { path: "/" });
+        cookies.set("loggedIn", true, { path: "/" });
+        cookies.set("researcherID", researcherID, { path: "/" });
+        cookies.set("firstName", firstNameRes, { path: "/" });
+        cookies.set("email", emailRes, { path: "/" });
+
+        router.push('/assessments')
+
+      } catch (error) {
+        alert(error.message)
+        setIsButtonDisabled(false);
+      }
+    } else {
+        alert("Something went wrong with the information entered. Please try again.");
+        setIsButtonDisabled(false);
+    }
+  };
+
+  return (
+    &lt;div className="hero h-full bg-base-200 flex flex-col overflow-scroll">
+      &lt;img className="hero-content mt-8 lg:w-1/2 w-2/3 flex self-center" src="/images/digital-neurology-logo-dark.png" alt="Digital Neurology" />
+      &lt;div className="hero-content flex-col lg:flex-row max-w-4xl">
+        &lt;div className="text-center lg:text-left">
+          &lt;h1 className="text-5xl font-bold text-stone-700">Sign Up&lt;/h1>
+          &lt;p className="py-6 text-stone-500 lg:text-sm text-lg font-bold">This platform allows researchers with limited technical skills to be able to create assessments or surveys easily and efficiently so they can collect patient data.&lt;/p>
+        &lt;/div>
+        &lt;div className="card flex-wrap-row flex-shrink-0 w-full max-w-2xl shadow-2xl bg-base-100 lg:max-w-xl">
+          &lt;form className="px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+            &lt;div className="flex flex-row justify-around">
+              &lt;div className="mb-4 px-2">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
+                  First Name
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="First Name" />
+              &lt;/div>
+              &lt;div className="mb-4">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
+                  Last Name
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Last Name" />
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="flex flex-row justify-around">
+              &lt;div className="mb-4">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                  Email
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email" />
+              &lt;/div>
+              &lt;div className="mb-4">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmEmail">
+                  Confirm Email
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirmEmail" type="text" placeholder="Confirm Email" />
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="flex flex-row justify-around">
+              &lt;div className="mb-4">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                  Password
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
+                {/* &lt;p className="text-red-500 text-xs italic">Please choose a password.&lt;/p> */}
+              &lt;/div>
+              &lt;div className="mb-6">
+                &lt;label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                  Confirm Password
+                &lt;/label>
+                &lt;input className="shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="confirmPassword" type="password" placeholder="******************" />
+                {/* &lt;p className="text-red-500 text-xs italic">Please choose a password.&lt;/p> */}
+              &lt;/div>
+            &lt;/div>
+            &lt;div className="flex justify-center">
+                {isButtonDisabled &amp;&amp; &lt;button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                    &lt;div className='flex justify-center'>&lt;span className="text-white-900 loading loading-spinner loading-md">&lt;/span>&lt;/div>
+                  &lt;/button>}
+                {!isButtonDisabled &amp;&amp; &lt;button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                    Sign Up
+                  &lt;/button>}
+            &lt;/div>
+            &lt;div className="flex items-center justify-between my-3">
+              &lt;Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/login">
+                Have An Account?
+              &lt;/Link>
+              {/* &lt;Link className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/auth/forgot">
+                Forgot Password?
+              &lt;/Link> */}
+            &lt;/div>
+          &lt;/form>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div> 
+  );
+};
+
+export default Register;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AssessmentRow">AssessmentRow</a></li><li><a href="global.html#Assessments">Assessments</a></li><li><a href="global.html#CheckBox">CheckBox</a></li><li><a href="global.html#ConsentQuestion">ConsentQuestion</a></li><li><a href="global.html#CreateSurvey">CreateSurvey</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#DashboardRow">DashboardRow</a></li><li><a href="global.html#DuplicateSurvey">DuplicateSurvey</a></li><li><a href="global.html#EditSurvey">EditSurvey</a></li><li><a href="global.html#FreeResponse">FreeResponse</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#MultipleChoice">MultipleChoice</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Participant">Participant</a></li><li><a href="global.html#ParticipantRow">ParticipantRow</a></li><li><a href="global.html#Rating">Rating</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#StartAssessment">StartAssessment</a></li><li><a href="global.html#SurveyComponent">SurveyComponent</a></li><li><a href="global.html#SurveyRow">SurveyRow</a></li><li><a href="global.html#Surveys">Surveys</a></li><li><a href="global.html#Table">Table</a></li><li><a href="global.html#ViewSurvey">ViewSurvey</a></li><li><a href="global.html#fetcher">fetcher</a></li><li><a href="global.html#formatDate">formatDate</a></li><li><a href="global.html#formatQuestions">formatQuestions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Dec 09 2023 19:01:21 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

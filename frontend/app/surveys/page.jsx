@@ -7,6 +7,12 @@ import isAuth from '@/app/components/isAuth';
 import useSWR from 'swr'; 
 import { useRouter } from 'next/navigation';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
@@ -22,10 +28,20 @@ const fetcher = async (url) => {
     return await response.json();
 }
 
+/**
+ * Surveys component for displaying a list of surveys.
+ *
+ * @returns {JSX.Element} - The JSX element representing the Surveys component.
+ */
 const Surveys = () => {
     const { data, error, isLoading } = useSWR('http://localhost:8000/survey', fetcher)
     const router = useRouter();
 
+    /**
+     * Handles the creation of a new survey.
+     *
+     * @param {Event} e - The submit event triggered by the form.
+     */
     const handleCreateSurvey = (e) => {
         e.preventDefault();
         const surveyName = e.target.elements.surveyName.value;

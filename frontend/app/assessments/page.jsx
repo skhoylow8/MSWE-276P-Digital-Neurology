@@ -8,6 +8,12 @@ import useSWR from "swr";
 import Cookies from "universal-cookie";
 import isAuth from '@/app/components/isAuth';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
   const response = await fetch(url, {
     method: "GET",
@@ -23,6 +29,12 @@ const fetcher = async (url) => {
   return await response.json();
 };
 
+/**
+ * Builds the Assessments component for the Assessments page.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the Assessments component.
+ */
 const Assessments = () => {
   const { data, error, isLoading } = useSWR(
     "http://localhost:8000/assessment",
@@ -31,6 +43,12 @@ const Assessments = () => {
   const [surveyData, setSurveyData] = useState([]);
   const [surveysSelected, setSurveysSelected] = useState([]);
 
+  /**
+   * Handles the submission of the create assessment form and creates an assessment.
+   *
+   * @param {Event} e - The submit event.
+   * @returns {void}
+   */
   const handleCreateAssessment = async (e) => {
     const surveyIDS = surveysSelected.map((survey) => survey.value);
     const fileInput = document.getElementById("consentForm");
@@ -85,6 +103,11 @@ const Assessments = () => {
     }
   };
 
+  /**
+   * Opens the create assessment modal and fetches survey data.
+   *
+   * @returns {void}
+   */
   const handleCreateAssessmentModal = async () => {
     document.getElementById("create-assessment-modal").showModal();
 

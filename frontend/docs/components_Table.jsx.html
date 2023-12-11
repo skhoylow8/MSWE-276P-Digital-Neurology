@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Table.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Table.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import Modal from "../components/Modal";
+import { FormField, RadioGroup, RadioOption } from "@qualtrics/ui-react";
+import { useRouter, redirect } from "next/navigation";
+import Cookies from "universal-cookie";
+
+/**
+ * Formats a Date Object into a readable date string.
+ *
+ * @param {Date} date - The Date object to be formatted.
+ * @returns {string} - The formatted date string.
+ */
+const formatDate = (date) => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+/**
+ * DashboardRow - A component representing a row in the dashboard table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the dashboard entry.
+ * @param {string} props.name - The name of the dashboard entry.
+ * @param {string} props.status - The status of the dashboard entry (e.g., "completed", "incomplete").
+ * @param {string} props.completedOn - The date when the dashboard entry was completed.
+ * @returns {JSX.Element} JSX element representing the dashboard row.
+ */
+const DashboardRow = ({ id, name, status, completedOn }) => {
+  return (
+    &lt;tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
+      &lt;td>{id}&lt;/td>
+      &lt;td>{name}&lt;/td>
+      &lt;td>
+        &lt;span
+          className={
+            status == "completed"
+              ? "badge badge-ghost bg-green-300 rounded-md"
+              : "badge badge-ghost bg-yellow-300 rounded-md"
+          }
+        >
+          {status.charAt(0).toUpperCase() + status.substring(1)}
+        &lt;/span>
+      &lt;/td>
+      &lt;td className="">{formatDate(completedOn)} &lt;/td>
+    &lt;/tr>
+  );
+};
+
+/**
+ * AssessmentRow - A component representing a row in the assessment table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the assessment.
+ * @param {string} props.name - The name of the assessment.
+ * @param {string} props.description - The description of the assessment.
+ * @param {string} props.createdOn - The date when the assessment was created.
+ * @param {string} props.consentText - The text describing the consent for the assessment.
+ * @returns {JSX.Element} JSX element representing the assessment row.
+ */
+const AssessmentRow = ({ id, name, description, createdOn, consentText }) => {
+  /**
+   * Displays the modal to start an assessment
+   * @param {string} id 
+   * @param {string} consent 
+   */
+  const handleStartAssessment = (id, consent) => {
+    document.getElementById("consentText").textContent = consent; // uses passed on consent text to show on modal
+    document
+      .getElementById("start-assessment-modal")
+      .setAttribute("data-id", id);
+    document.getElementById("start-assessment-modal").showModal();
+  };
+
+  /**
+   * Handles the download of the assessment responses
+   * @param {string} id 
+   */
+  const handleDownloadAssessment = async(id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/response/download/${id}`,{
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+
+      if (response.ok) {
+        // Get the content disposition from the response headers
+        const contentDisposition = response.headers.get('content-disposition');
+        
+        // Extracting the filename from the content disposition header
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+        const matches = filenameRegex.exec(contentDisposition);
+        let filename = 'downloaded_assessments_file.csv';
+        if (matches != null &amp;&amp; matches[1]) {
+          filename = matches[1].replace(/['"]/g, '');
+        }
+        console.log(filename)
+
+        // Create a blob from the response data
+        const blob = await response.blob();
+        console.log(blob)
+
+        // Create a temporary URL to the blob
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a link element and click it to initiate the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up: remove the link and revoke the URL object
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else if(response.status == 400){
+        alert("No responses found for this assessment.");
+      } else {
+        console.error('File download failed:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+
+  return (
+    &lt;tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
+      &lt;td>{name ? name : "Unknown"}&lt;/td>
+      &lt;td className="w-1/2">{description ? description : "Unknown"}&lt;/td>
+      &lt;td className="">
+        {createdOn ? formatDate(new Date(createdOn)) : formatDate(new Date())}{" "}
+      &lt;/td>
+      &lt;td className="flex flex-row justify-around">
+        &lt;svg
+          id={'downloadCSV_' + id}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200"
+          onClick={() => handleDownloadAssessment(id)}
+        >
+          &lt;path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+          />
+        &lt;/svg>
+        &lt;svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200"
+          onClick={() => handleStartAssessment(id, consentText)}
+        >
+          &lt;path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"
+          />
+        &lt;/svg>
+      &lt;/td>
+    &lt;/tr>
+  );
+};
+
+/**
+ * ParticipantRow - A component representing a row in the participant table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.patientName - The name of the participant.
+ * @param {string} props.assessmentName - The name of the associated assessment.
+ * @param {string} props.createdOn - The date when the participant entry was created.
+ * @returns {JSX.Element} JSX element representing the participant row.
+ */
+const ParticipantRow = ({ patientName, assessmentName, createdOn }) => {
+  return (
+    &lt;tr className="bg-white text-stone-900 hover:bg-stone-50">
+      &lt;td>{ patientName }&lt;/td>
+      &lt;td>{ assessmentName }&lt;/td>
+      &lt;td>&lt;span className="badge badge-ghost bg-green-300 rounded-md">Completed&lt;/span>&lt;/td>
+      &lt;td className=''>{ formatDate(new Date(createdOn)) } &lt;/td>
+    &lt;/tr>
+  )
+}
+
+/**
+ * SurveyRow - A component representing a row in the survey table.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The ID of the survey.
+ * @param {string} props.name - The name of the survey.
+ * @param {string} props.description - The description of the survey.
+ * @param {string} props.createdOn - The date when the survey entry was created.
+ * @param {number} props.totalNumOfQ - The total number of questions in the survey.
+ * @param {string} props.researcherID - The ID of the researcher associated with the survey.
+ * @returns {JSX.Element} JSX element representing the survey row.
+ */
+const SurveyRow = ({ id, name, description, createdOn, totalNumOfQ, researcherID }) => {
+    const router = useRouter();
+    const cookies = new Cookies(); 
+
+    const handleEditSurvey = () => {
+        router.push(`/surveys/edit?data=${id}`)
+    }
+
+    const handleDuplicateSurvey = () => {
+        router.push(`/surveys/duplicate?data=${id}`)
+    }
+
+    const handleViewSurvey = () => {
+        router.push(`/surveys/view?data=${id}`);
+    }
+
+    return (
+        &lt;tr className="bg-white text-stone-900 hover:bg-stone-50" data-id={id}>
+            &lt;td>{ name ? name : 'Unknown' }&lt;/td>
+            &lt;td className='w-1/2'>{ description ? description : 'Unknown' }&lt;/td>
+            &lt;td>{ totalNumOfQ ? totalNumOfQ : 0 }&lt;/td>
+            &lt;td>{ createdOn ? formatDate(new Date(createdOn)) : formatDate(new Date()) } &lt;/td>
+            &lt;td className='flex flex-row justify-around'>
+            {
+                researcherID == cookies.get('researcherID') &amp;&amp;
+                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200" aria-labelledby='Edit Survey' onClick={handleEditSurvey}>
+                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                &lt;/svg>
+            } 
+                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200" aria-labelledby='Duplicate Survey' onClick={handleDuplicateSurvey}>
+                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                &lt;/svg>
+                &lt;svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 cursor-pointer rounded-full p-1 hover:bg-stone-200" aria-labelledby='View Survey' onClick={handleViewSurvey}>
+                    &lt;path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                &lt;/svg>
+            &lt;/td>
+        &lt;/tr>
+    )
+}
+
+/**
+ * Table - A component representing a table to display data in a tabular format.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {number} props.page - The current page number of the table.
+ * @param {Array} props.data - The array of data to be displayed in the table.
+ * @returns {JSX.Element} - JSX element representing the Table component.
+ */
+const Table = ({ page, data }) => {
+  const tableHeaders = {
+    "dashboard": ["Participant Name", "Assessment Name", "Status", "Completed On"],
+    "assessments": ["Assessment Name", "Assessment Description", "Created On"],
+    "participants": ["Participant Name", "Assessment Assigned", "Status", "Completed On"],
+    "surveys": ["Survey Name", "Survey Description", "Number of Questions", "Created On"],
+  };
+
+  const router = useRouter();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  /**
+   * Validates the input recieved and creates a patient in the database. Then starts the assessment.
+   * @param {event} e 
+   * @returns null
+   */
+  const handleStartAssessment = async (e) => {
+    e.preventDefault();
+    setIsButtonDisabled(true);
+    const modal = document.getElementById("start-assessment-modal");
+    const assessmentID = modal.dataset.id;
+
+    const consentRes = e.target.elements.consentQ.value;
+    const firstName = e.target.elements.firstName.value;
+    const lastName = e.target.elements.lastName.value;
+    const email = e.target.elements.email.value;
+
+    // save patient data if they consent
+    if (consentRes == "yes") {
+      const response = await fetch("http://localhost:8000/participant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          assessment_ids: [assessmentID],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const responseData = await response.json();
+      const patientID = responseData._id;
+
+      window.open(
+        `assessments/start?data=${encodeURIComponent(
+          assessmentID + "_" + patientID
+        )}`, "Assessment"
+      );
+
+      modal.close();
+      setIsButtonDisabled(false);
+    } else {
+      alert("Please see researcher for further instructions.");
+      setIsButtonDisabled(false);
+      return;
+    }
+  };
+
+    return (
+        &lt;div className="overflow-x-auto">
+            &lt;table className="table table-auto">
+                {/* head */}
+                &lt;thead>
+                    &lt;tr>
+                        {
+                            tableHeaders[page].map((header, index)=>{
+                                return &lt;th key={index}>{header}&lt;/th>
+                            })
+                        }
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody>
+                    {
+                        page == 'dashboard' &amp;&amp; data !== undefined &amp;&amp; data.length > 0 &amp;&amp; data.map((row) => {
+                            return &lt;DashboardRow key={row.id} id={row.id} name={row.name} status={row.status} completedOn={row.completedOn} />
+                        })
+                    }
+                    {
+                        page == 'assessments' &amp;&amp; data !== undefined &amp;&amp; data.length > 0 &amp;&amp; data.map((row, index) => {
+                            return &lt;AssessmentRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} consentText={row.consent_text} />
+                        })
+                    }
+                    {
+                        page == 'participants' &amp;&amp; data !== undefined &amp;&amp; data.length > 0 &amp;&amp; data.map((row, index) => {
+                            return &lt;ParticipantRow key={index} patientName={row.participant_first_name + " " + row.participant_last_name} assessmentName={row.assessment_name} createdOn={row.created_on} />
+                        })
+                    }
+                    {
+                        page == 'surveys' &amp;&amp; data !== undefined &amp;&amp; data.length > 0 &amp;&amp; data.map((row, index) => {
+                            return &lt;SurveyRow key={index} id={row._id} name={row.name} description={row.desc} createdOn={row.created_on} totalNumOfQ={row.questions.length} researcherID={row.researcherId} />
+                        })
+                    }
+                &lt;/tbody>
+            &lt;/table>
+            {/* Start Assessment Modal */}
+            &lt;Modal id="start-assessment-modal">
+                &lt;form onSubmit={handleStartAssessment}>
+                    &lt;h3 className="text-stone-900 text-2xl pb-4">Pre Screening Questionaire&lt;/h3>
+                    &lt;FormField
+                        // helperText="This is helper text"
+                        // errorText="This is an error message"
+                        id='consentFormQ'
+                        className='pb-4'
+                    >
+                        &lt;RadioGroup label="Do you consent to completing this assessment?" name="consentQ" defaultValue="1">
+                            &lt;RadioOption value="yes" label="Yes" />
+                            &lt;RadioOption value="no" label="No" />
+                        &lt;/RadioGroup>
+                    &lt;/FormField>
+                    &lt;textarea id="consentText" className='textarea textarea-bordered textarea-sm w-full' rows={5} disabled>&lt;/textarea>
+                    {/* &lt;input type="text" id="patientID" placeholder="Patient ID" className="input input-bordered w-full text-md my-1" required /> */}
+                    &lt;input type="text" id="firstName" placeholder="First Name" className="input input-bordered w-full text-md my-1" required />
+                    &lt;input type="text" id="lastName" placeholder="Last Name" className="input input-bordered w-full text-md my-1" required />
+                    &lt;input type="text" id="email" placeholder="Email" className="input input-bordered w-full text-md my-1" required />
+                    &lt;div className="flex justify-center mt-4">
+                        {isButtonDisabled &amp;&amp; &lt;button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit" disabled >
+                            &lt;div className='flex justify-center'>&lt;span className="text-white-900 loading loading-spinner loading-md">&lt;/span>&lt;/div>
+                          &lt;/button>}
+                        {!isButtonDisabled &amp;&amp; &lt;button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                            Start Assessment
+                          &lt;/button>}
+                    &lt;/div>
+                &lt;/form>
+            &lt;/Modal>
+        &lt;/div>
+    )
+}
+
+export default Table;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AssessmentRow">AssessmentRow</a></li><li><a href="global.html#Assessments">Assessments</a></li><li><a href="global.html#CheckBox">CheckBox</a></li><li><a href="global.html#ConsentQuestion">ConsentQuestion</a></li><li><a href="global.html#CreateSurvey">CreateSurvey</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#DashboardRow">DashboardRow</a></li><li><a href="global.html#DuplicateSurvey">DuplicateSurvey</a></li><li><a href="global.html#EditSurvey">EditSurvey</a></li><li><a href="global.html#FreeResponse">FreeResponse</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#Modal">Modal</a></li><li><a href="global.html#MultipleChoice">MultipleChoice</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Participant">Participant</a></li><li><a href="global.html#ParticipantRow">ParticipantRow</a></li><li><a href="global.html#Rating">Rating</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#StartAssessment">StartAssessment</a></li><li><a href="global.html#SurveyComponent">SurveyComponent</a></li><li><a href="global.html#SurveyRow">SurveyRow</a></li><li><a href="global.html#Surveys">Surveys</a></li><li><a href="global.html#Table">Table</a></li><li><a href="global.html#ViewSurvey">ViewSurvey</a></li><li><a href="global.html#fetcher">fetcher</a></li><li><a href="global.html#formatDate">formatDate</a></li><li><a href="global.html#formatQuestions">formatQuestions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sat Dec 09 2023 19:01:21 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

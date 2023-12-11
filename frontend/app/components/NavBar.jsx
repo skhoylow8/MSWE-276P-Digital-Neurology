@@ -4,10 +4,22 @@ import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import Cookies from 'universal-cookie';
 
+/**
+ * NavBar - A component representing the navigation bar.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} [props.page] - The proper page highlighted in the navigation bar.
+ * @returns {JSX.Element} - JSX element representing the NavBar component.
+ */
 const NavBar = (props) => {
     const router = useRouter();
     const cookies = new Cookies();
 
+    /**
+     * Handles logging out the user on both the frontend and backend
+     * @param {Event} e 
+     */
     const handleLogout = async (e) =>{
         e.preventDefault();
         try {

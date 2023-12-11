@@ -5,6 +5,13 @@ import NavBar from '@/app/components/NavBar';
 import isAuth from '@/app/components/isAuth';
 import Cookies from 'universal-cookie';
 
+/**
+ * Dashboard - A component representing the dashboard.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} - JSX element representing the Dashboard component.
+ */
 const Dashboard = (props) => {
     const cookies = new Cookies();
     const date = new Date(); 

@@ -3,7 +3,20 @@ import { useEffect, useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
+/**
+ * A higher-order component (HOC) that wraps a component and ensures authentication.
+ *
+ * @param {JSX.Element} Component - The React component to be wrapped.
+ * @returns {Function} - A function that, when called, returns the wrapped component.
+ */
 export default function isAuth(Component) {
+  /**
+   * Wrapped component that ensures authentication before rendering.
+   *
+   * @component
+   * @param {Object} props - The props passed to the wrapped component.
+   * @returns {JSX.Element|null} - Returns the wrapped component if authenticated, otherwise null.
+   */
   return function IsAuth(props) {
     const cookies = new Cookies();
     const router = useRouter();
@@ -42,7 +55,7 @@ export default function isAuth(Component) {
           }).finally(() => {
             router.push("/");
           });
-      } else if ((!auth || auth === null) && !isLoggedIn) {
+      } else if ((!auth || auth === null) && !isLoggedIn) { // if not authenticated and not logged in redirect to login page
         router.push("/");
       }
     }, []);

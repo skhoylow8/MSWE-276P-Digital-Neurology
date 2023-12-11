@@ -12,6 +12,12 @@ import isAuth from '@/app/components/isAuth';
 import EditableLabel from 'react-inline-editing';
 import Cookies from 'universal-cookie';
 
+/**
+ * Fetches data from the given URL.
+ *
+ * @param {string} url - The URL to fetch data from.
+ * @returns {Promise<Object>} - A promise that resolves to the fetched JSON data.
+ */
 const fetcher = async (url) => {
 	const response = await fetch(url, {
 		method: 'GET',
@@ -27,6 +33,12 @@ const fetcher = async (url) => {
   return await response.json();
 }
 
+/**
+ * DuplicateSurvey - A component for duplicating surveys.
+ *
+ * @component
+ * @returns {JSX.Element} - JSX element representing the DuplicateSurvey component.
+ */
 const DuplicateSurvey = () => {
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -47,10 +59,20 @@ const DuplicateSurvey = () => {
 		setCounter(1);
 	}
 
+    /**
+     * Handles changes in the question type.
+     *
+     * @param {string} newState - The new question type.
+     */
 	const handleStateChange = (newState) => {
         setQuestionType(newState);
     };
 	
+    /**
+     * Handles the addition of a new question.
+     *
+     * @param {Event} e - The event object.
+     */
 	const handleAddQuestion = (e) => {
 		e.preventDefault()
 		const question = e.target.elements.questionTitle.value;
@@ -65,6 +87,11 @@ const DuplicateSurvey = () => {
 		document.getElementById('add-question-modal').close();
 	}
 
+    /**
+     * Handles the editing of an existing question.
+     *
+     * @param {Event} e - The event object.
+     */
 	const handleEditQuestion = (e) => {
 		e.preventDefault()
 		const question = e.target.elements.editQuestionTitle.value;
@@ -82,6 +109,7 @@ const DuplicateSurvey = () => {
 		document.getElementById('edit-question-modal').close();
 	}
 
+	// Function to handle duplicating the survey
 	const handleDuplicateSurvey = async () => {
 		const cookies = new Cookies();
 		const researcherID = cookies.get('researcherID').toString();

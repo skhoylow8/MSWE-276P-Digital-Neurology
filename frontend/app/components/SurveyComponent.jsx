@@ -7,6 +7,16 @@ import theme from "../../public/utils/survey_theme.json";
 import Cookies from "universal-cookie";
 import { useRouter } from "next/navigation";
 
+/**
+ * SurveyComponent - A component for rendering survey-related information.
+ *
+ * @function
+ * @param {Object} props - The component props.
+ * @param {Array} props.data - The survey data to be displayed.
+ * @param {string} props.assessmentID - The ID associated with the assessment.
+ * @param {string} props.patientID - The ID of the patient associated with the survey.
+ * @returns {JSX.Element} - JSX element representing the SurveyComponent.
+ */
 function SurveyComponent({ data, assessmentID, patientID }) {
     const [survey] = useState(new Model(data));
     const [pageNo, setPageNo] = useState(survey.currentPageNo);
@@ -23,6 +33,11 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
     survey.onComplete.add(() => { setIsRunning(false); });
 
+    /**
+     * Formats the survey results into a json object
+     * @param {JSON} res 
+     * @returns formatted json data for survey
+     */
     const formatSurveyResults = (res) => {
         let results = []
 
@@ -50,6 +65,10 @@ function SurveyComponent({ data, assessmentID, patientID }) {
 
     const prevPage = () => { survey.prevPage(); };
     const nextPage = () => { survey.nextPage(); };
+
+    /**
+     * Ends the survey, gets all the questions and formats the data, and sends the results to the backend
+     */
     const endSurvey = async () => { 
         let surveryResults = survey.data;
         const cookies = new Cookies();
@@ -84,7 +103,7 @@ function SurveyComponent({ data, assessmentID, patientID }) {
         } catch (error) {
             console.error(error.message)
         }
-     };   
+    };   
 
     const renderButton = (text, func, canRender) => {
         if (!canRender) return undefined;
